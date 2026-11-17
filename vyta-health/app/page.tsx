@@ -1,430 +1,271 @@
  "use client";
 
 import { useState } from "react";
-import type { ReactNode } from "react";
+import type { ReactNode, FormEvent } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import {
-  motion,
-  useScroll,
-  useTransform,
-  useSpring,
-  AnimatePresence,
-} from "framer-motion";
-import {
-  ArrowDownRight,
-  ArrowRight,
-  ArrowUpRight,
-  Activity,
-  Apple,
-  Brain,
-  Camera,
-  Check,
-  ChevronDown,
-  ChevronLeft,
-  ChevronRight,
-  CircleHelp,
-  Clock3,
-  Dumbbell,
-  Flame,
-  Heart,
-  Leaf,
-  Menu,
-  Moon,
-  Plus,
-  ScanLine,
-  ShieldCheck,
-  ShoppingBag,
-  Sparkles,
-  Target,
-  Watch,
-  X,
-  Zap,
-  Droplets,
-  Footprints,
+  Activity, Apple, ArrowRight, ArrowUpRight, Brain, Camera, Check,
+  ChevronDown, Clock3, Dumbbell, Footprints, HeartPulse, Menu, Moon,
+  ScanLine, Sparkles, Target, X, Droplets, ChartNoAxesCombined, CalendarDays
 } from "lucide-react";
 
-const lime = "#C6FF4D";
 
-function Reveal({
-  children,
-  className = "",
-  delay = 0,
-}: {
-  children: ReactNode;
-  className?: string;
-  delay?: number;
+function Reveal({ children, className = "", delay = 0 }: {
+  children: ReactNode; className?: string; delay?: number;
 }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 42, scale: 0.985, filter: "blur(10px)" }}
-      whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
-      viewport={{ once: true, amount: 0.16 }}
-      transition={{ duration: 0.95, delay, ease: [0.22, 1, 0.36, 1] }}
-      className={className}
-    >
-      {children}
-    </motion.div>
-  );
+  return <motion.div className={className} initial={{ opacity: 0, y: 30 }}
+    whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.14 }}
+    transition={{ duration: .75, delay, ease: [0.22, 1, .36, 1] }}>{children}</motion.div>;
 }
 
 function Eyebrow({ children }: { children: ReactNode }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, x: -14 }}
-      whileInView={{ opacity: 1, x: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
-      className="mb-5 flex items-center gap-3 text-[10px] font-semibold uppercase tracking-[.28em] text-[#c6ff4d] md:text-xs"
-    >
-      <motion.span initial={{ width: 0 }} whileInView={{ width: 28 }} viewport={{ once: true }} transition={{ duration: .8, delay: .12 }} className="h-px bg-[#c6ff4d]" />
-      {children}
-    </motion.div>
-  );
+  return <div className="mb-5 flex items-center gap-3 text-[10px] font-semibold uppercase tracking-[.25em] text-[#c6ff4d] md:text-xs">
+    <span className="h-px w-7 bg-[#c6ff4d]" />{children}</div>;
 }
 
-function SectionTitle({
-  eyebrow,
-  title,
-  accent,
-  description,
-  center = false,
-}: {
-  eyebrow: string;
-  title: string;
-  accent?: string;
-  description: string;
-  center?: boolean;
+function Heading({ tag, title, accent, copy, center = false }: {
+  tag: string; title: string; accent?: string; copy: string; center?: boolean;
 }) {
-  return (
-    <div className={`${center ? "mx-auto text-center" : ""} max-w-3xl`}>
-      <div className={center ? "flex justify-center" : ""}>
-        <Eyebrow>{eyebrow}</Eyebrow>
+  return <div className={`${center ? "mx-auto text-center" : ""} max-w-3xl`}>
+    <div className={center ? "flex justify-center" : ""}><Eyebrow>{tag}</Eyebrow></div>
+    <h2 className="text-balance text-4xl font-semibold leading-[.98] tracking-[-.065em] text-[#f5f6f2] sm:text-5xl md:text-7xl">
+      {title} {accent && <span className="text-[#c6ff4d]">{accent}</span>}
+    </h2>
+    <p className={`mt-6 max-w-2xl text-sm leading-7 text-white/50 md:text-base md:leading-8 ${center ? "mx-auto" : ""}`}>{copy}</p>
+  </div>;
+}
+
+function Panel({ children, className = "" }: { children: ReactNode; className?: string }) {
+  return <div className={`rounded-[24px] border border-white/10 bg-white/[.045] shadow-[inset_0_1px_0_rgba(255,255,255,.06)] backdrop-blur-xl ${className}`}>{children}</div>;
+}
+
+function Label({ children }: { children: ReactNode }) {
+  return <div className="text-[9px] font-semibold uppercase tracking-[.2em] text-white/35">{children}</div>;
+}
+
+function Dashboard() {
+  const bars = [35, 52, 42, 73, 58, 88, 64];
+  return <div className="relative mx-auto w-full max-w-[1120px]">
+    <div className="absolute -inset-10 rounded-full bg-[#c6ff4d]/10 blur-[90px]" />
+    <div className="relative overflow-hidden rounded-[26px] border border-white/15 bg-[#11140f] shadow-[0_35px_120px_rgba(0,0,0,.55)]">
+      <div className="flex items-center justify-between border-b border-white/10 px-5 py-4 md:px-7">
+        <div className="font-bold tracking-tight">VYTA<span className="text-[#c6ff4d]">.</span></div>
+        <div className="hidden gap-6 text-[10px] text-white/40 sm:flex"><span className="text-[#c6ff4d]">Today</span><span>Nutrition</span><span>Training</span><span>Recovery</span></div>
+        <div className="rounded-full border border-[#c6ff4d]/20 bg-[#c6ff4d]/10 px-3 py-1.5 text-[9px] tracking-wider text-[#c6ff4d]">PERSONAL HEALTH SPACE</div>
       </div>
-      <motion.h2
-        initial={{ opacity: 0, y: 28, clipPath: "inset(0 0 35% 0)" }}
-        whileInView={{ opacity: 1, y: 0, clipPath: "inset(0 0 0% 0)" }}
-        viewport={{ once: true }}
-        transition={{ duration: .9, ease: [0.22, 1, 0.36, 1] }}
-        className="text-balance text-4xl font-semibold leading-[.98] tracking-[-.065em] text-[#f5f6f2] sm:text-5xl md:text-7xl"
-      >
-        {title} {accent && <span className="text-[#c6ff4d]">{accent}</span>}
-      </motion.h2>
-      <motion.p
-        initial={{ opacity: 0, y: 18 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: .75, delay: .18 }}
-        className={`mt-6 max-w-2xl text-sm leading-7 text-white/48 md:text-base md:leading-8 ${center ? "mx-auto" : ""}`}
-      >
-        {description}
-      </motion.p>
-    </div>
-  );
-}
-
-function GlassCard({
-  children,
-  className = "",
-}: {
-  children: ReactNode;
-  className?: string;
-}) {
-  return (
-    <motion.div
-      whileHover={{ y: -6, borderColor: "rgba(198,255,77,.32)", transition: { duration: .25 } }}
-      className={`rounded-[24px] border border-white/[.12] bg-white/[.055] shadow-[inset_0_1px_0_rgba(255,255,255,.09),0_24px_80px_rgba(0,0,0,.24)] backdrop-blur-2xl ${className}`}
-    >
-      {children}
-    </motion.div>
-  );
-}
-
-function DashboardMockup() {
-  const bars = [36, 58, 44, 78, 54, 92, 66, 83, 48, 72, 60, 100, 68, 88];
-  return (
-    <div className="relative mx-auto w-full max-w-[1120px]">
-      <div className="absolute -inset-8 rounded-[50%] bg-[#a6ff00]/[.10] blur-[90px]" />
-      <div className="relative overflow-hidden rounded-t-[26px] border border-white/15 bg-[#10120f] shadow-[0_40px_120px_rgba(0,0,0,.65)]">
-        <div className="flex h-14 items-center justify-between border-b border-white/10 px-4 md:px-7">
-          <div className="flex items-center gap-2 text-sm font-bold tracking-tight">VYTA<span className="text-[#c6ff4d]">.</span></div>
-          <div className="hidden items-center gap-6 text-[10px] text-white/35 sm:flex">
-            <span className="text-[#c6ff4d]">Overview</span><span>Nutrition</span><span>Activity</span><span>Recovery</span>
+      <div className="grid gap-4 p-4 md:grid-cols-[1.2fr_.8fr] md:p-7">
+        <div className="space-y-4">
+          <div><Label>Tuesday · Daily overview</Label><h3 className="mt-2 text-2xl font-semibold md:text-3xl">Your day, in context.</h3><p className="mt-2 text-xs text-white/40">A clearer view of the habits that shape your progress.</p></div>
+          <div className="grid grid-cols-3 gap-2">
+            {[["1,640","Calories"],["92 g","Protein"],["7,840","Steps"]].map(([v,l])=><Panel key={l} className="p-3 md:p-4"><div className="mb-4 text-[#c6ff4d]"><Activity size={16}/></div><div className="text-xl font-semibold md:text-2xl">{v}</div><div className="mt-1 text-[9px] text-white/40">{l}</div></Panel>)}
           </div>
-          <div className="flex items-center gap-2"><span className="h-2 w-2 rounded-full bg-[#c6ff4d] shadow-[0_0_12px_#c6ff4d]" /><span className="text-[9px] uppercase tracking-widest text-white/45">Your health space</span></div>
+          <Panel className="p-4 md:p-5">
+            <div className="flex items-center justify-between"><div><Label>Nutrition breakdown</Label><div className="mt-1 text-sm font-medium">Today's intake</div></div><span className="text-[10px] text-[#c6ff4d]">Illustrative data</span></div>
+            <div className="mt-5 flex h-28 items-end gap-2">{bars.map((v,i)=><motion.div key={i} initial={{height:0}} whileInView={{height:`${v}%`}} viewport={{once:true}} transition={{duration:.6,delay:i*.07}} className={`flex-1 rounded-t-md ${i===5?"bg-[#c6ff4d]":"bg-white/15"}`}/>)}</div>
+            <div className="mt-3 flex justify-between text-[8px] uppercase tracking-widest text-white/25"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div>
+          </Panel>
         </div>
-        <div className="grid gap-4 p-4 md:grid-cols-[1.2fr_.8fr] md:p-7">
-          <div className="space-y-4">
-            <div className="flex items-end justify-between">
-              <div><p className="text-[10px] uppercase tracking-[.2em] text-white/35">Monday, your overview</p><h3 className="mt-2 text-2xl font-semibold tracking-tight md:text-3xl">Good morning.</h3></div>
-              <span className="rounded-full border border-[#c6ff4d]/20 bg-[#c6ff4d]/10 px-3 py-1.5 text-[9px] text-[#c6ff4d]">DAILY PULSE</span>
-            </div>
-            <div className="grid grid-cols-3 gap-2 md:gap-3">
-              {[["1,640","KCAL IN",Flame],["8,420","STEPS",Footprints],["7h 42m","SLEEP",Moon]].map(([value,label,Icon]: any) => (
-                <div key={label} className="rounded-2xl border border-white/10 bg-white/[.045] p-3 md:p-4">
-                  <Icon size={15} className="mb-4 text-[#c6ff4d]" />
-                  <div className="text-lg font-semibold md:text-2xl">{value}</div><div className="mt-1 text-[8px] tracking-[.18em] text-white/35 md:text-[9px]">{label}</div>
-                </div>
-              ))}
-            </div>
-            <div className="rounded-2xl border border-white/10 bg-white/[.035] p-4 md:p-5">
-              <div className="flex items-center justify-between"><div><p className="text-[9px] uppercase tracking-[.2em] text-white/35">Activity rhythm</p><p className="mt-1 text-sm font-medium">Movement this week</p></div><span className="text-[10px] text-[#c6ff4d]">+12.8%</span></div>
-              <div className="mt-5 flex h-24 items-end gap-1.5 md:h-32 md:gap-2">{bars.map((v,i)=><motion.div key={i} initial={{height:0}} whileInView={{height:`${v}%`}} viewport={{once:true}} transition={{duration:.65,delay:i*.035}} className={`flex-1 rounded-t-md ${i===11?"bg-[#c6ff4d]":"bg-white/15"}`} />)}</div>
-              <div className="mt-3 flex justify-between text-[8px] uppercase tracking-widest text-white/25"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div>
-            </div>
-          </div>
-          <div className="space-y-4">
-            <div className="rounded-2xl border border-[#c6ff4d]/20 bg-[radial-gradient(circle_at_80%_0%,rgba(198,255,77,.15),transparent_55%),rgba(255,255,255,.035)] p-5 md:p-6">
-              <div className="flex items-center justify-between"><span className="text-[9px] uppercase tracking-[.2em] text-white/40">Your daily focus</span><Target size={16} className="text-[#c6ff4d]"/></div>
-              <div className="mt-7 text-4xl font-semibold tracking-tight">72<span className="text-lg text-white/35">%</span></div><p className="mt-1 text-xs text-white/45">A little progress, every day.</p>
-              <div className="mt-5 h-1.5 overflow-hidden rounded-full bg-white/10"><motion.div initial={{width:0}} whileInView={{width:"72%"}} viewport={{once:true}} transition={{duration:1.1}} className="h-full rounded-full bg-[#c6ff4d]"/></div>
-              <div className="mt-5 flex items-center gap-2 text-[10px] text-[#c6ff4d]"><Check size={13}/> Consistency is building</div>
-            </div>
-            <div className="rounded-2xl border border-white/10 bg-white/[.035] p-5">
-              <div className="flex items-center justify-between"><span className="text-[9px] uppercase tracking-[.2em] text-white/35">AI companion</span><Sparkles size={15} className="text-[#c6ff4d]"/></div>
-              <p className="mt-5 text-lg font-medium leading-snug">Your week is taking shape.</p>
-              <p className="mt-2 text-xs leading-6 text-white/40">You have been moving more consistently. Keep your recovery in focus today.</p>
-              <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-[#c6ff4d] px-3 py-2 text-[9px] font-bold text-black">View insight <ArrowUpRight size={12}/></div>
-            </div>
-          </div>
+        <div className="space-y-4">
+          <Panel className="border-[#c6ff4d]/20 bg-[#c6ff4d]/[.06] p-5">
+            <div className="flex items-center justify-between"><Label>Daily targets</Label><Target size={16} className="text-[#c6ff4d]"/></div>
+            <div className="mt-6 text-4xl font-semibold">68<span className="text-lg text-white/35">%</span></div><p className="mt-1 text-xs text-white/45">Example goal completion</p>
+            <div className="mt-5 h-1.5 rounded-full bg-white/10"><div className="h-full w-[68%] rounded-full bg-[#c6ff4d]"/></div>
+            <div className="mt-5 space-y-3 text-xs">{[["Nutrition","On track"],["Movement","In progress"],["Recovery","To log"]].map(([a,b])=><div key={a} className="flex justify-between"><span className="text-white/55">{a}</span><span className="text-white/75">{b}</span></div>)}</div>
+          </Panel>
+          <Panel className="p-5">
+            <div className="flex items-center gap-2 text-[#c6ff4d]"><Sparkles size={15}/><Label>VYTA intelligence</Label></div>
+            <p className="mt-4 text-lg font-medium leading-snug">Patterns matter more than one perfect day.</p>
+            <p className="mt-2 text-xs leading-6 text-white/45">Bring meals, movement and recovery into one picture, then use that context to decide what to focus on next.</p>
+          </Panel>
         </div>
       </div>
     </div>
-  );
+    <p className="relative mt-3 text-center text-[9px] tracking-wide text-white/30">Concept interface · sample values for demonstration only</p>
+  </div>;
 }
 
-function OrbitVisual() {
-  const nodes = [
-    { label: "Nutrition", icon: Apple, x: "50%", y: "2%" },
-    { label: "Movement", icon: Activity, x: "84%", y: "25%" },
-    { label: "Recovery", icon: Moon, x: "84%", y: "72%" },
-    { label: "Mindset", icon: Brain, x: "50%", y: "91%" },
-    { label: "Hydration", icon: Droplets, x: "16%", y: "72%" },
-    { label: "Progress", icon: Target, x: "16%", y: "25%" },
-  ];
-  return (
-    <div className="relative mx-auto aspect-square w-full max-w-[560px]">
-      <motion.div animate={{rotate:360}} transition={{duration:70,repeat:Infinity,ease:"linear"}} className="absolute inset-[8%] rounded-full border border-dashed border-[#c6ff4d]/20"/>
-      <motion.div animate={{rotate:-360}} transition={{duration:95,repeat:Infinity,ease:"linear"}} className="absolute inset-[21%] rounded-full border border-white/10"/>
-      <div className="absolute inset-[34%] rounded-full bg-[#c6ff4d]/10 blur-3xl"/>
-      <div className="absolute inset-[34%] flex flex-col items-center justify-center rounded-full border border-[#c6ff4d]/40 bg-[#c6ff4d] text-black shadow-[0_0_90px_rgba(198,255,77,.28)]">
-        <span className="text-4xl font-black tracking-[-.08em]">V.</span><span className="mt-1 text-[8px] font-bold uppercase tracking-[.2em]">One connected you</span>
-      </div>
-      {nodes.map(({label,icon:Icon,x,y},i)=>(
-        <motion.div key={label} animate={{y:[0,-8,0]}} transition={{duration:3.5+i*.35,repeat:Infinity,ease:"easeInOut",delay:i*.2}} style={{left:x,top:y,transform:"translate(-50%,-50%)"}} className="absolute flex -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-2">
-          <div className="flex h-12 w-12 items-center justify-center rounded-full border border-white/15 bg-[#171a14]/90 shadow-[0_10px_35px_rgba(0,0,0,.4)] backdrop-blur-xl md:h-16 md:w-16"><Icon className="text-[#c6ff4d]" size={22}/></div>
-          <span className="text-[8px] uppercase tracking-[.15em] text-white/45 md:text-[9px]">{label}</span>
-        </motion.div>
-      ))}
+function MealScan() {
+  return <Panel className="relative overflow-hidden p-4 md:p-6">
+    <div className="flex items-center justify-between"><Label>Meal capture · concept preview</Label><ScanLine size={17} className="text-[#c6ff4d]"/></div>
+    <div className="relative mt-5 overflow-hidden rounded-2xl bg-[#20251b]">
+      <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=1000&q=85" alt="A balanced bowl of food" className="h-52 w-full object-cover opacity-85 md:h-64"/>
+      <div className="absolute inset-4 rounded-xl border border-[#c6ff4d]/70"><span className="absolute -left-px -top-px h-5 w-5 border-l-2 border-t-2 border-[#c6ff4d]"/><span className="absolute -right-px -top-px h-5 w-5 border-r-2 border-t-2 border-[#c6ff4d]"/><span className="absolute -bottom-px -left-px h-5 w-5 border-b-2 border-l-2 border-[#c6ff4d]"/><span className="absolute -bottom-px -right-px h-5 w-5 border-b-2 border-r-2 border-[#c6ff4d]"/></div>
+      <div className="absolute bottom-3 left-3 flex items-center gap-2 rounded-full bg-black/65 px-3 py-2 text-[10px] text-white"><Camera size={13} className="text-[#c6ff4d]"/> Scan a meal</div>
     </div>
-  );
+    <div className="mt-4 rounded-2xl border border-white/10 bg-black/20 p-4">
+      <div className="flex items-center justify-between"><div><div className="text-sm font-semibold">Meal estimate</div><div className="mt-1 text-[10px] text-white/40">Review before saving</div></div><span className="text-xl font-semibold text-[#c6ff4d]">520 <small className="text-xs text-white/40">kcal*</small></span></div>
+      <div className="mt-4 grid grid-cols-3 gap-2">{[["Protein","28 g"],["Carbs","54 g"],["Fat","18 g"]].map(([a,b])=><div key={a} className="rounded-xl bg-white/[.05] p-3"><Label>{a}</Label><div className="mt-1 font-semibold">{b}</div></div>)}</div>
+    </div>
+    <p className="mt-3 text-[9px] leading-5 text-white/30">*Illustrative estimate only. Actual nutrition estimates depend on food recognition, portion size and user corrections.</p>
+  </Panel>;
 }
+
+const faqs = [
+  ["What is VYTA?", "VYTA is being designed as a connected health companion that brings nutrition, training, recovery and progress tracking into one place."],
+  ["Can I use my own diet preferences?", "The product is planned to support different dietary patterns and food preferences, including vegetarian and non-vegetarian choices. Personalisation options will be confirmed as features are released."],
+  ["How accurate is AI food scanning?", "A camera-based estimate is an approximation, not a lab measurement. Food type, ingredients and portion size can change the result. The intended workflow includes reviewing and correcting estimates before saving."],
+  ["Will VYTA connect to wearables?", "Wearable and health-platform connections are part of the product direction. Specific devices and integrations will be announced only when they are supported."],
+  ["Is VYTA a replacement for a doctor or dietitian?", "No. VYTA is intended for general wellness, habit tracking and fitness support. It is not designed to diagnose, treat or replace professional medical advice."]
+];
 
 export default function Home() {
-  const [menuOpen,setMenuOpen] = useState(false);
-  const [goal,setGoal] = useState("Build healthier habits");
-  const [diet,setDiet] = useState("Vegetarian");
-  const [submitted,setSubmitted] = useState(false);
-  const [faqOpen,setFaqOpen] = useState<number|null>(0);
-  const [activeFeature,setActiveFeature] = useState(0);
-  const {scrollYProgress} = useScroll();
-  const progress = useSpring(scrollYProgress,{stiffness:100,damping:30,mass:.2});
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [faqOpen, setFaqOpen] = useState<number | null>(0);
+  const [email, setEmail] = useState("");
+  const [submitted, setSubmitted] = useState(false);
 
-  const nav = [["Product","#product"],["Nutrition","#nutrition"],["Fitness","#fitness"],["Store","#store"]];
+  function submitWaitlist(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    if (email.trim()) setSubmitted(true);
+  }
 
-  const features = [
-    {n:"01",title:"Smart nutrition",desc:"Understand what is on your plate and make more informed choices with meal insights and flexible planning.",icon:Apple,tag:"EAT WITH INTENTION"},
-    {n:"02",title:"Adaptive fitness",desc:"Build routines around your goals, your ability and your real life. Progress at a pace you can sustain.",icon:Dumbbell,tag:"MOVE WITH PURPOSE"},
-    {n:"03",title:"Recovery intelligence",desc:"Bring sleep, hydration and daily recovery habits into the same picture as your training.",icon:Moon,tag:"RECOVER WITH CLARITY"},
-  ];
-
-  const faqs = [
-    ["What is VYTA?","VYTA is being designed as an AI-powered health companion that brings nutrition, fitness, recovery and personal progress into one connected experience."],
-    ["Is the AI food scanner available now?","The food-scanning experience shown here is a product concept. Nutrition estimates will need to be checked and adjusted by users, and may vary with ingredients and portion sizes."],
-    ["Can I choose my diet preference?","The planned experience includes vegetarian, vegan and non-vegetarian preferences, with meal ideas shaped around individual goals."],
-    ["Will VYTA include workouts?","Yes. The planned fitness experience includes goal-based workout guidance, activity tracking and progress insights."],
-    ["Does VYTA connect to wearables?","Wearable and health-platform connections are part of the product direction. Supported devices and integrations will be confirmed closer to launch."],
-    ["When will VYTA launch?","VYTA is in development. Join the early-access list to hear about product progress and launch availability."],
-  ];
-
-  return (
-    <main className="min-h-screen overflow-x-clip bg-[#070807] text-[#f5f6f2] selection:bg-[#c6ff4d] selection:text-black">
-      <motion.div style={{scaleX:progress}} className="fixed left-0 right-0 top-0 z-[100] h-[2px] origin-left bg-[#c6ff4d]"/>
-      <header className="fixed left-0 right-0 top-0 z-50 px-3 pt-3 md:px-8 md:pt-5">
-        <div className="mx-auto flex h-[66px] max-w-[1450px] items-center justify-between rounded-full border border-white/[.13] bg-[#0a0b09]/75 px-5 shadow-[0_12px_50px_rgba(0,0,0,.35)] backdrop-blur-2xl md:px-8">
-          <a href="#home" className="text-2xl font-black tracking-[-.09em] md:text-[27px]">VYTA<span className="text-[#c6ff4d]">.</span></a>
-          <nav className="hidden items-center gap-1 rounded-full border border-white/10 bg-black/25 p-1 md:flex">
-            {nav.map(([label,href])=><motion.a key={href} href={href} whileHover={{ y: -2, color: "#ffffff" }} whileTap={{ scale: .96 }} className="rounded-full px-5 py-2.5 text-xs text-white/65 transition hover:bg-white/10">{label}</motion.a>)}
-            <a href="#ecosystem" className="rounded-full px-5 py-2.5 text-xs text-white/65 transition hover:bg-white/10 hover:text-white">Ecosystem</a>
-          </nav>
-          <div className="hidden items-center gap-3 md:flex">
-            <a href="#faq" className="rounded-full bg-white/[.08] px-5 py-3 text-xs font-medium text-white/80 transition hover:bg-white/15">Explore</a>
-            <motion.a href="#register" whileHover={{ scale: 1.045, boxShadow: "0 0 35px rgba(198,255,77,.22)" }} whileTap={{ scale: .97 }} className="group flex items-center gap-3 rounded-full bg-[#c6ff4d] py-1.5 pl-5 pr-1.5 text-xs font-bold text-black transition hover:scale-[1.03]">Get early access<span className="flex h-9 w-9 items-center justify-center rounded-full bg-black text-[#c6ff4d] transition group-hover:rotate-45"><ArrowUpRight size={17}/></span></motion.a>
-          </div>
-          <button onClick={()=>setMenuOpen(!menuOpen)} aria-label="Toggle menu" className="rounded-full border border-white/15 p-2.5 md:hidden">{menuOpen?<X size={19}/>:<Menu size={19}/>}</button>
+  return <main className="min-h-screen overflow-hidden bg-[#080a07] text-[#f5f6f2] selection:bg-[#c6ff4d] selection:text-black">
+    <div className="pointer-events-none fixed inset-0 z-0 opacity-[.12]" style={{backgroundImage:"linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px)",backgroundSize:"72px 72px"}}/>
+    <header className="sticky top-0 z-50 border-b border-white/[.07] bg-[#080a07]/80 backdrop-blur-2xl">
+      <nav className="mx-auto flex max-w-[1320px] items-center justify-between px-5 py-4 md:px-10">
+        <a href="#" className="text-xl font-black tracking-[-.08em]">VYTA<span className="text-[#c6ff4d]">.</span></a>
+        <div className="hidden items-center gap-8 text-[11px] text-white/55 md:flex">
+          <a className="transition hover:text-[#c6ff4d]" href="#platform">Platform</a><a className="transition hover:text-[#c6ff4d]" href="#nutrition">Nutrition</a><a className="transition hover:text-[#c6ff4d]" href="#training">Training</a><a className="transition hover:text-[#c6ff4d]" href="#how">How it works</a><a className="transition hover:text-[#c6ff4d]" href="#faq">FAQ</a>
         </div>
-        <AnimatePresence>
-          {menuOpen&&<motion.div initial={{opacity:0,y:-10}} animate={{opacity:1,y:0}} exit={{opacity:0,y:-10}} className="mx-3 mt-2 flex flex-col gap-1 rounded-3xl border border-white/10 bg-[#10120f]/95 p-4 backdrop-blur-2xl md:hidden">
-            {[...nav,["Ecosystem","#ecosystem"],["FAQ","#faq"],["Early access","#register"]].map(([label,href])=><a key={href} href={href} onClick={()=>setMenuOpen(false)} className="rounded-xl px-4 py-3 text-sm text-white/75 hover:bg-white/5">{label}</a>)}
-          </motion.div>}
-        </AnimatePresence>
-      </header>
+        <a href="#waitlist" className="hidden rounded-full bg-[#c6ff4d] px-5 py-2.5 text-[10px] font-bold text-black transition hover:scale-[1.04] md:inline-flex">Get early access <ArrowUpRight size={13} className="ml-2"/></a>
+        <button onClick={()=>setMenuOpen(!menuOpen)} className="text-white md:hidden" aria-label="Toggle menu">{menuOpen?<X/>:<Menu/>}</button>
+      </nav>
+      <AnimatePresence>{menuOpen&&<motion.div initial={{height:0,opacity:0}} animate={{height:"auto",opacity:1}} exit={{height:0,opacity:0}} className="overflow-hidden border-t border-white/10 md:hidden"><div className="flex flex-col gap-5 px-6 py-6 text-sm text-white/70">{[["Platform","#platform"],["Nutrition","#nutrition"],["Training","#training"],["How it works","#how"],["FAQ","#faq"],["Get early access","#waitlist"]].map(([a,b])=><a key={a} href={b} onClick={()=>setMenuOpen(false)}>{a}</a>)}</div></motion.div>}</AnimatePresence>
+    </header>
 
-      {/* HERO — Wcrypt-inspired central statement and product interface mockup */}
-      <section id="home" className="relative flex min-h-[900px] flex-col items-center overflow-hidden px-5 pb-0 pt-36 text-center md:min-h-[1050px] md:pt-44">
-        <motion.div animate={{ opacity: [.55, .9, .55], scale: [1, 1.08, 1] }} transition={{ duration: 9, repeat: Infinity, ease: "easeInOut" }} className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_50%_68%,rgba(145,255,0,.17),transparent_38%),radial-gradient(ellipse_at_50%_0%,rgba(255,255,255,.035),transparent_45%)]"/>
-        <div className="pointer-events-none absolute -left-40 top-56 h-[500px] w-[500px] rounded-full border border-[#c6ff4d]/[.08]"/>
-        <div className="pointer-events-none absolute -right-40 top-56 h-[500px] w-[500px] rounded-full border border-[#c6ff4d]/[.08]"/>
-        <Reveal className="relative z-10">
-          <Eyebrow>One system. A healthier you.</Eyebrow>
-          <h1 className="mx-auto max-w-5xl text-balance text-5xl font-semibold leading-[.94] tracking-[-.075em] sm:text-7xl md:text-[104px]">Your health,<br/><span className="text-[#c6ff4d]">in a new light.</span></h1>
-          <p className="mx-auto mt-7 max-w-xl text-sm leading-7 text-white/45 md:text-base md:leading-8">Nutrition, movement, recovery and everyday habits. Connected by intelligence that helps you understand the whole picture.</p>
-          <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <motion.a href="#register" whileHover={{ scale: 1.045, boxShadow: "0 0 42px rgba(198,255,77,.24)" }} whileTap={{ scale: .97 }} className="group flex items-center gap-3 rounded-full bg-[#c6ff4d] py-1.5 pl-6 pr-1.5 text-sm font-bold text-black transition hover:scale-105">Get early access<span className="flex h-11 w-11 items-center justify-center rounded-full bg-black text-[#c6ff4d] transition group-hover:rotate-45"><ArrowUpRight size={19}/></span></motion.a>
-            <a href="#product" className="flex items-center gap-2 rounded-full border border-white/15 px-6 py-4 text-sm text-white/75 transition hover:border-white/35 hover:bg-white/5">Explore VYTA <ArrowDownRight size={16}/></a>
-          </div>
-        </Reveal>
-        <motion.div initial={{opacity:0,y:90,scale:.94,rotateX:8}} whileInView={{opacity:1,y:0,scale:1,rotateX:0}} viewport={{once:true,amount:.1}} transition={{duration:1.25,ease:[.22,1,.36,1]}} whileHover={{y:-5}} className="relative z-10 mt-20 w-full max-w-[1120px]" style={{transformPerspective:1200}}>
-          <DashboardMockup/>
-          <div className="absolute -left-2 top-[30%] hidden -translate-x-1/2 lg:block"><GlassCard className="w-40 p-4 text-left"><Activity className="text-[#c6ff4d]" size={17}/><p className="mt-4 text-2xl font-semibold">+18.4%</p><p className="mt-1 text-[9px] uppercase tracking-widest text-white/35">Weekly activity</p></GlassCard></div>
-          <div className="absolute -right-3 bottom-[14%] hidden translate-x-1/2 lg:block"><GlassCard className="w-40 p-4 text-left"><Heart className="text-[#c6ff4d]" size={17}/><p className="mt-4 text-sm font-semibold">In balance</p><p className="mt-1 text-[9px] uppercase tracking-widest text-white/35">Recovery preview</p></GlassCard></div>
-        </motion.div>
-        <div className="relative z-10 mt-8 flex w-full max-w-[1120px] items-center justify-between border-t border-white/10 py-5 text-[8px] uppercase tracking-[.25em] text-white/25 md:text-[9px]"><span>01 / Understand</span><span className="hidden sm:block">A connected health companion</span><span>Scroll to explore ↓</span></div>
-      </section>
+    <section className="relative z-10 px-5 pb-20 pt-20 md:px-10 md:pb-28 md:pt-28">
+      <div className="mx-auto max-w-[1320px]">
+        <Reveal><div className="mx-auto mb-8 flex w-fit items-center gap-2 rounded-full border border-[#c6ff4d]/20 bg-[#c6ff4d]/[.06] px-4 py-2 text-[9px] uppercase tracking-[.2em] text-[#c6ff4d]"><span className="h-1.5 w-1.5 rounded-full bg-[#c6ff4d]"/> A connected health companion</div></Reveal>
+        <Reveal delay={.08}><h1 className="mx-auto max-w-5xl text-center text-balance text-5xl font-semibold leading-[.94] tracking-[-.075em] sm:text-6xl md:text-8xl">Understand your body.<br/><span className="text-[#c6ff4d]">Own your progress.</span></h1></Reveal>
+        <Reveal delay={.16}><p className="mx-auto mt-7 max-w-2xl text-center text-sm leading-7 text-white/50 md:text-base md:leading-8">VYTA brings food tracking, personalised nutrition, workout planning, recovery habits and health progress into one connected experience, so you can see what is working and what to do next.</p></Reveal>
+        <Reveal delay={.22}><div className="mt-8 flex flex-wrap justify-center gap-3"><a href="#how" className="rounded-full bg-[#c6ff4d] px-6 py-3.5 text-xs font-bold text-black transition hover:scale-105">Explore how VYTA works <ArrowRight className="ml-2 inline" size={14}/></a><a href="#waitlist" className="rounded-full border border-white/15 px-6 py-3.5 text-xs text-white/75 transition hover:border-[#c6ff4d]/50">Join early access</a></div></Reveal>
+        <div className="mt-16 md:mt-24"><Dashboard/></div>
+        <div className="mt-8 grid grid-cols-2 gap-3 md:grid-cols-4">{[["01","Capture what you eat"],["02","Plan how you move"],["03","Track how you recover"],["04","Understand your trends"]].map(([n,t])=><div key={n} className="border-t border-white/15 pt-4"><div className="text-[10px] text-[#c6ff4d]">{n}</div><div className="mt-2 text-xs text-white/55">{t}</div></div>)}</div>
+      </div>
+    </section>
 
-      {/* INTRO — Techware-style product/editorial feature cards */}
-      <section id="product" className="bg-[#f2f2ef] px-5 py-24 text-[#090a08] md:px-10 md:py-32">
-        <div className="mx-auto max-w-[1320px]">
-          <div className="flex flex-col justify-between gap-8 md:flex-row md:items-end">
-            <div className="max-w-2xl"><Eyebrow>Designed around real life</Eyebrow><h2 className="text-5xl font-semibold leading-[.98] tracking-[-.07em] md:text-7xl">A better way to<br/>care for <span className="text-[#86b900]">yourself.</span></h2></div>
-            <div className="max-w-md pb-1"><p className="text-sm leading-7 text-black/55 md:text-base">Not another tracker asking you to do more. A thoughtful system that helps make sense of the things you already do, every day.</p><a href="#ecosystem" className="mt-5 inline-flex items-center gap-2 text-sm font-semibold">Explore the VYTA system <ArrowUpRight size={16}/></a></div>
-          </div>
-          <div className="mt-14 grid gap-5 md:grid-cols-2">
-            <div className="space-y-5">
-              <Reveal className="group overflow-hidden rounded-[26px] bg-[#e5e5e1]">
-                <div className="relative h-[310px] overflow-hidden md:h-[390px]"><img src="https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=1600&q=90" alt="Fresh balanced meal" className="h-full w-full object-cover transition duration-700 group-hover:scale-105"/><div className="absolute inset-0 bg-gradient-to-t from-black/35 to-transparent"/></div>
-                <div className="p-6 md:p-8"><div className="text-[9px] uppercase tracking-[.22em] text-black/40">01 / Nutrition</div><h3 className="mt-3 text-3xl font-semibold tracking-[-.05em] md:text-4xl">Eat with insight.</h3><p className="mt-3 max-w-lg text-sm leading-6 text-black/55">Turn meals into useful information, without losing the joy of eating.</p></div>
-              </Reveal>
-              <Reveal delay={.12} className="group overflow-hidden rounded-[26px] bg-[#e5e5e1]">
-                <div className="relative h-[280px] overflow-hidden md:h-[340px]"><img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1600&q=90" alt="Athlete training in gym" className="h-full w-full object-cover transition duration-700 group-hover:scale-105"/><div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"/></div>
-                <div className="p-6 md:p-8"><div className="text-[9px] uppercase tracking-[.22em] text-black/40">02 / Movement</div><h3 className="mt-3 text-3xl font-semibold tracking-[-.05em] md:text-4xl">Train with purpose.</h3><p className="mt-3 max-w-lg text-sm leading-6 text-black/55">Build routines that meet you where you are and grow with you.</p></div>
-              </Reveal>
-            </div>
-            <Reveal delay={.1} className="group overflow-hidden rounded-[26px] bg-[#e5e5e1]">
-              <div className="relative h-[540px] overflow-hidden md:h-[770px]"><img src="https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=1800&q=90" alt="Mindful recovery and stretching" className="h-full w-full object-cover transition duration-700 group-hover:scale-105"/><div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent"/></div>
-              <div className="p-6 md:p-8"><div className="text-[9px] uppercase tracking-[.22em] text-black/40">03 / Recovery</div><h3 className="mt-3 text-3xl font-semibold tracking-[-.05em] md:text-4xl">Recover smarter.</h3><p className="mt-3 max-w-lg text-sm leading-6 text-black/55">Make rest, sleep and daily habits part of your progress story.</p></div>
-            </Reveal>
-          </div>
+    <section id="platform" className="relative z-10 border-y border-white/[.07] bg-[#0d100b] px-5 py-24 md:px-10 md:py-32">
+      <div className="mx-auto grid max-w-[1320px] gap-14 lg:grid-cols-[.85fr_1.15fr] lg:items-center">
+        <Reveal><Heading tag="The VYTA platform" title="Your health is connected." accent="Your tools should be too." copy="Nutrition affects training. Training affects recovery. Recovery affects consistency. VYTA is being designed to bring these parts together instead of leaving your health data scattered across disconnected apps and notes."/></Reveal>
+        <div className="grid gap-3 sm:grid-cols-2">
+          {[
+            [Apple,"Nutrition intelligence","Log meals, estimate calories and macros, and compare your intake with your personal targets."],
+            [Dumbbell,"Training plans","Build goal-led routines, follow exercise guidance and record each workout."],
+            [Moon,"Recovery habits","Keep sleep, hydration and daily movement visible alongside your training load."],
+            [ChartNoAxesCombined,"Progress insights","Review trends over time instead of judging progress from a single day."]
+          ].map(([Icon,title,copy]:any,i)=><Reveal key={title} delay={i*.07}><Panel className="h-full p-6 transition duration-300 hover:-translate-y-1 hover:border-[#c6ff4d]/30"><div className="mb-8 flex h-11 w-11 items-center justify-center rounded-xl bg-[#c6ff4d]/10 text-[#c6ff4d]"><Icon size={20}/></div><h3 className="text-lg font-semibold">{title}</h3><p className="mt-3 text-xs leading-6 text-white/45">{copy}</p></Panel></Reveal>)}
         </div>
-      </section>
+      </div>
+    </section>
 
-      {/* THREE FEATURE CARDS — Wcrypt-style */}
-      <section className="px-5 py-24 md:px-10 md:py-32">
-        <div className="mx-auto max-w-[1280px]">
-          <SectionTitle eyebrow="The VYTA difference" title="A connected system." accent="A clearer you." description="The things that shape your health are connected. Your tools should be, too." center/>
-          <div className="mt-16 grid gap-4 md:grid-cols-3">
-            {features.map((f,i)=>{const Icon=f.icon;return <Reveal key={f.n} delay={i*.1} className="group rounded-[26px] border border-white/10 bg-[#111310] p-6 transition duration-500 hover:-translate-y-2 hover:border-[#c6ff4d]/35 md:p-8"><div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#c6ff4d] text-black"><Icon size={22}/></div><div className="mt-12 text-[9px] tracking-[.2em] text-[#c6ff4d]">{f.n} / {f.tag}</div><h3 className="mt-3 text-2xl font-semibold tracking-[-.04em]">{f.title}</h3><p className="mt-4 text-sm leading-7 text-white/42">{f.desc}</p><div className="mt-8 flex items-center justify-between border-t border-white/10 pt-5 text-[10px] uppercase tracking-[.18em] text-white/30"><span>Explore feature</span><ArrowUpRight size={16} className="text-[#c6ff4d] transition group-hover:-translate-y-1 group-hover:translate-x-1"/></div></Reveal>})}
-          </div>
-        </div>
-      </section>
+    <section id="nutrition" className="relative z-10 px-5 py-24 md:px-10 md:py-32">
+      <div className="mx-auto grid max-w-[1320px] gap-14 lg:grid-cols-2 lg:items-center">
+        <Reveal><div><Eyebrow>01 / Nutrition intelligence</Eyebrow><h2 className="max-w-xl text-4xl font-semibold leading-[.98] tracking-[-.065em] md:text-6xl">Know what is on your plate. <span className="text-[#c6ff4d]">Know what it means.</span></h2><p className="mt-6 max-w-xl text-sm leading-7 text-white/50">Make food tracking less tedious. Capture a meal, review the foods VYTA recognises, adjust portions and save an estimated nutrition breakdown to your diary.</p>
+          <div className="mt-8 space-y-5">{[[Camera,"Capture","Take a photo or add a meal manually."],[ScanLine,"Review the estimate","Check recognised foods and correct portions or ingredients."],[Target,"Track against your goals","See estimated calories, protein, carbohydrates and fats alongside your daily targets."],[CalendarDays,"Build consistency","Look back at meal history and patterns across days and weeks."]].map(([Icon,a,b]:any)=><div key={a} className="flex gap-4"><div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-[#c6ff4d]/20 bg-[#c6ff4d]/[.07] text-[#c6ff4d]"><Icon size={17}/></div><div><h3 className="text-sm font-semibold">{a}</h3><p className="mt-1 text-xs leading-6 text-white/45">{b}</p></div></div>)}</div>
+          <div className="mt-8 flex flex-wrap gap-2">{["Vegetarian","Vegan","Non-vegetarian","Custom preferences"].map(x=><span key={x} className="rounded-full border border-white/10 px-3 py-2 text-[10px] text-white/55">{x}</span>)}</div>
+        </div></Reveal>
+        <Reveal delay={.12}><MealScan/></Reveal>
+      </div>
+    </section>
 
-      {/* NUTRITION — editorial section + interactive diet toggle */}
-      <section id="nutrition" className="bg-[#f2f2ef] px-5 py-24 text-[#080908] md:px-10 md:py-32">
-        <div className="mx-auto grid max-w-[1320px] items-center gap-12 lg:grid-cols-[.9fr_1.1fr]">
-          <Reveal>
-            <Eyebrow>01 / Food intelligence</Eyebrow>
-            <h2 className="text-5xl font-semibold leading-[.94] tracking-[-.07em] md:text-7xl">Know what<br/>fuels <span className="text-[#86b900]">you.</span></h2>
-            <p className="mt-7 max-w-md text-sm leading-7 text-black/55 md:text-base">A meal is more than a calorie count. VYTA is designed to help you understand ingredients, portions and nutritional patterns over time.</p>
-            <div className="mt-8 flex flex-wrap gap-2">{["Vegetarian","Vegan","Non-vegetarian"].map(d=><button key={d} onClick={()=>setDiet(d)} className={`rounded-full border px-4 py-2.5 text-xs transition ${diet===d?"border-black bg-black text-white":"border-black/15 text-black/60 hover:border-black/40"}`}>{d}</button>)}</div>
-            <div className="mt-8 grid max-w-md grid-cols-3 gap-3">{[["2,000","Daily kcal*"],["120g","Protein*"],["4","Meal ideas*"]].map(([v,l])=><div key={l} className="rounded-2xl bg-white p-4"><div className="text-2xl font-semibold tracking-tight">{v}</div><div className="mt-1 text-[9px] uppercase tracking-widest text-black/40">{l}</div></div>)}</div>
-            <p className="mt-4 text-[10px] text-black/35">*Illustrative preview values. Not a personal nutrition prescription.</p>
-          </Reveal>
-          <Reveal delay={.12} className="relative overflow-hidden rounded-[30px] bg-[#dfe0d9] p-3 md:p-5">
-            <div className="relative h-[280px] overflow-hidden rounded-[22px] md:h-[390px]"><img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=1800&q=90" alt="Healthy food bowl" className="h-full w-full object-cover"/><div className="absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-transparent"/><div className="absolute bottom-5 left-5 text-white"><div className="text-[9px] uppercase tracking-[.2em] text-white/65">Your plate, decoded</div><div className="mt-2 text-3xl font-semibold tracking-tight">Food, understood.</div></div></div>
-            <div className="mt-3 grid grid-cols-2 gap-3">
-              <div className="rounded-2xl bg-white p-4"><div className="text-[9px] uppercase tracking-widest text-black/40">Meal estimate</div><div className="mt-2 text-3xl font-semibold">640 <span className="text-xs font-normal text-black/45">kcal</span></div><div className="mt-1 text-[9px] text-black/35">Illustrative only</div></div>
-              <div className="rounded-2xl bg-[#c6ff4d] p-4"><div className="text-[9px] uppercase tracking-widest text-black/50">AI meal insight</div><div className="mt-2 text-sm font-semibold">A balanced plate.</div><div className="mt-1 text-[10px] text-black/55">Protein · Fibre · Colour</div></div>
-            </div>
-          </Reveal>
-        </div>
-      </section>
+    <section id="training" className="relative z-10 border-y border-white/[.07] bg-[#0d100b] px-5 py-24 md:px-10 md:py-32">
+      <div className="mx-auto grid max-w-[1320px] gap-14 lg:grid-cols-2 lg:items-center">
+        <Reveal><Panel className="overflow-hidden p-5 md:p-7">
+          <div className="flex items-center justify-between"><div><Label>Training plan · concept preview</Label><h3 className="mt-2 text-2xl font-semibold">Upper body strength</h3></div><span className="rounded-full bg-[#c6ff4d]/10 px-3 py-1.5 text-[9px] text-[#c6ff4d]">DAY 02</span></div>
+          <div className="mt-6 flex items-center gap-4 rounded-2xl bg-white/[.04] p-4"><img src="https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?auto=format&fit=crop&w=400&q=80" alt="Strength training" className="h-20 w-20 rounded-xl object-cover"/><div><div className="font-medium">Dumbbell bench press</div><div className="mt-1 text-xs text-white/40">Chest · Compound movement</div><div className="mt-3 text-[10px] text-[#c6ff4d]">3 sets · 10 reps · 90 sec rest</div></div></div>
+          <div className="mt-3 space-y-2">{[["Seated cable row","3 × 12"],["Shoulder press","3 × 10"],["Lat pulldown","3 × 12"],["Triceps pushdown","2 × 15"]].map(([a,b],i)=><div key={a} className="flex items-center justify-between rounded-xl border border-white/[.07] px-4 py-3"><div className="flex items-center gap-3"><span className="text-[10px] text-white/25">0{i+2}</span><span className="text-xs text-white/75">{a}</span></div><span className="text-[10px] text-white/40">{b}</span></div>)}</div>
+          <div className="mt-5 flex items-center justify-between border-t border-white/10 pt-4 text-xs"><span className="text-white/40">Estimated session</span><span>45–55 min</span></div>
+          <p className="mt-3 text-[9px] text-white/30">Illustrative workout interface. Plan content is an example, not a personalised prescription.</p>
+        </Panel></Reveal>
+        <Reveal delay={.1}><div><Eyebrow>02 / Training that adapts</Eyebrow><h2 className="max-w-xl text-4xl font-semibold leading-[.98] tracking-[-.065em] md:text-6xl">A plan you can follow. <span className="text-[#c6ff4d]">Progress you can measure.</span></h2><p className="mt-6 max-w-xl text-sm leading-7 text-white/50">Move beyond generic workout lists. VYTA is planned to help you organise training around your goal, experience and available equipment, then keep a record of the work you do.</p>
+          <div className="mt-8 grid gap-4 sm:grid-cols-2">{[[Target,"Goal-led routines","Choose a direction such as strength, muscle building, endurance or general fitness."],[Activity,"Exercise guidance","Understand movement setup, target muscles and useful form cues."],[Clock3,"Workout logging","Record sets, reps, weights and rest periods as you train."],[ChartNoAxesCombined,"Training history","Compare sessions and follow strength and consistency trends."]].map(([Icon,a,b]:any)=><div key={a} className="border-l border-[#c6ff4d]/35 pl-4"><Icon size={17} className="mb-3 text-[#c6ff4d]"/><h3 className="text-sm font-semibold">{a}</h3><p className="mt-2 text-xs leading-6 text-white/45">{b}</p></div>)}</div>
+        </div></Reveal>
+      </div>
+    </section>
 
-      {/* FITNESS — immersive photographic feature */}
-      <section id="fitness" className="relative overflow-hidden px-5 py-28 md:px-10 md:py-40">
-        <div className="absolute inset-0"><img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=2200&q=90" alt="" className="h-full w-full object-cover opacity-35"/><div className="absolute inset-0 bg-gradient-to-r from-[#070807] via-[#070807]/80 to-[#070807]/30"/><div className="absolute inset-0 bg-gradient-to-t from-[#070807] via-transparent to-[#070807]/40"/></div>
-        <div className="relative mx-auto grid max-w-[1280px] items-center gap-12 lg:grid-cols-[1fr_.8fr]">
-          <Reveal><Eyebrow>02 / Fitness intelligence</Eyebrow><h2 className="max-w-3xl text-5xl font-semibold leading-[.94] tracking-[-.07em] md:text-7xl">Make every<br/>move <span className="text-[#c6ff4d]">count.</span></h2><p className="mt-7 max-w-lg text-sm leading-7 text-white/55 md:text-base">From your first workout to your next personal best, VYTA is being shaped to make movement more intentional, measurable and sustainable.</p><div className="mt-9 flex flex-wrap gap-3">{["Goal-based plans","Activity tracking","Progress insights"].map(t=><span key={t} className="rounded-full border border-white/15 bg-white/[.06] px-4 py-2.5 text-xs text-white/70 backdrop-blur-xl">{t}</span>)}</div></Reveal>
-          <Reveal delay={.15}><GlassCard className="p-6 md:p-8"><div className="flex items-center justify-between"><span className="text-[9px] uppercase tracking-[.2em] text-white/40">Training snapshot</span><Dumbbell size={18} className="text-[#c6ff4d]"/></div><div className="mt-9 flex items-end justify-between"><div><div className="text-5xl font-semibold tracking-[-.06em]">04<span className="text-lg text-white/35">/05</span></div><p className="mt-2 text-xs text-white/45">Weekly sessions preview</p></div><div className="rounded-full bg-[#c6ff4d]/10 px-3 py-2 text-[10px] text-[#c6ff4d]">On your way</div></div><div className="mt-8 grid grid-cols-5 gap-2">{["M","T","W","T","F"].map((d,i)=><div key={d+i} className="text-center"><div className={`mx-auto flex aspect-square items-center justify-center rounded-xl ${i<4?"bg-[#c6ff4d] text-black":"bg-white/10 text-white/35"}`}>{i<4?<Check size={15}/>:<Plus size={15}/>}</div><div className="mt-2 text-[9px] text-white/35">{d}</div></div>)}</div><div className="mt-8 border-t border-white/10 pt-5"><div className="flex justify-between text-xs"><span className="text-white/45">Consistency</span><span>80%</span></div><div className="mt-3 h-1.5 rounded-full bg-white/10"><div className="h-full w-4/5 rounded-full bg-[#c6ff4d]"/></div></div><p className="mt-5 text-[9px] text-white/25">Illustrative dashboard concept.</p></GlassCard></Reveal>
+    <section className="relative z-10 px-5 py-24 md:px-10 md:py-32">
+      <div className="mx-auto max-w-[1320px]">
+        <Reveal><Heading tag="03 / Recovery and daily habits" title="Progress is built" accent="outside the gym." copy="Training is only one part of the picture. Keep the everyday habits that support your goals visible, so you can understand the relationship between activity, rest and consistency."/></Reveal>
+        <div className="mt-14 grid gap-3 md:grid-cols-3">
+          {[[Moon,"Sleep","Log sleep duration and review your patterns over time.","7h 35m","SLEEP LOG"],[Droplets,"Hydration","Set a daily water goal and keep track of your intake.","1.8 L","WATER TRACKER"],[Footprints,"Daily movement","Keep steps and everyday activity in view alongside workouts.","8,240","STEP COUNT"]].map(([Icon,a,b,v,l]:any,i)=><Reveal key={a} delay={i*.08}><Panel className="h-full p-6 md:p-7"><div className="flex items-center justify-between"><div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#c6ff4d]/10 text-[#c6ff4d]"><Icon size={20}/></div><Label>{l}</Label></div><div className="mt-10 text-3xl font-semibold">{v}</div><h3 className="mt-2 text-lg font-semibold">{a}</h3><p className="mt-2 text-xs leading-6 text-white/45">{b}</p></Panel></Reveal>)}
         </div>
-      </section>
+        <p className="mt-4 text-[9px] text-white/30">Sample values shown for interface illustration. Wearable and automatic data integrations are planned and may not be available at launch.</p>
+      </div>
+    </section>
 
-      {/* HEALTH ECOSYSTEM — orbit / coin motif adapted to VYTA */}
-      <section id="ecosystem" className="overflow-hidden bg-[#0c0f0a] px-5 py-24 md:px-10 md:py-32">
-        <div className="mx-auto grid max-w-[1280px] items-center gap-10 lg:grid-cols-[.9fr_1.1fr]">
-          <Reveal><Eyebrow>03 / Connected health</Eyebrow><h2 className="text-5xl font-semibold leading-[.95] tracking-[-.07em] md:text-7xl">Everything<br/>works <span className="text-[#c6ff4d]">together.</span></h2><p className="mt-7 max-w-md text-sm leading-7 text-white/48 md:text-base">Nutrition affects energy. Movement shapes strength. Recovery supports consistency. VYTA brings these signals into one connected view.</p><div className="mt-9 space-y-4">{[[Apple,"Nutrition that adapts"],[Watch,"Wearable connections"],[Moon,"Sleep and recovery"],[Droplets,"Hydration and habits"]].map(([Icon,label]:any)=><div key={label} className="flex items-center gap-3 text-sm text-white/65"><span className="flex h-9 w-9 items-center justify-center rounded-full border border-[#c6ff4d]/20 bg-[#c6ff4d]/10 text-[#c6ff4d]"><Icon size={16}/></span>{label}</div>)}</div></Reveal>
-          <Reveal delay={.15}><OrbitVisual/></Reveal>
-        </div>
-      </section>
+    <section className="relative z-10 border-y border-white/[.07] bg-[#0d100b] px-5 py-24 md:px-10 md:py-32">
+      <div className="mx-auto grid max-w-[1320px] gap-12 lg:grid-cols-[.9fr_1.1fr] lg:items-center">
+        <Reveal><div><Eyebrow>04 / Progress over time</Eyebrow><h2 className="text-4xl font-semibold leading-[.98] tracking-[-.065em] md:text-6xl">Less guesswork. <span className="text-[#c6ff4d]">More perspective.</span></h2><p className="mt-6 max-w-xl text-sm leading-7 text-white/50">A single weigh-in or workout tells you very little. VYTA is intended to help you see longer-term patterns across the metrics you choose to track.</p>
+          <ul className="mt-8 space-y-4 text-sm text-white/65">{["Body weight and measurement trends","Progress photos organised over time","Workout performance and strength history","Nutrition consistency and goal adherence","Weekly summaries that put the numbers in context"].map(x=><li key={x} className="flex items-center gap-3"><Check size={15} className="text-[#c6ff4d]"/>{x}</li>)}</ul></div></Reveal>
+        <Reveal delay={.1}><Panel className="p-5 md:p-7"><div className="flex items-center justify-between"><div><Label>Progress overview · concept preview</Label><h3 className="mt-2 text-xl font-semibold">Your consistency, over time</h3></div><span className="text-[10px] text-white/35">8 weeks</span></div>
+          <div className="mt-8 flex h-48 items-end gap-2 border-b border-l border-white/10 px-2 pb-2">{[34,42,39,53,48,63,58,70,66,76,72,86,80,92].map((v,i)=><motion.div key={i} initial={{height:0}} whileInView={{height:`${v}%`}} viewport={{once:true}} transition={{duration:.6,delay:i*.035}} className={`flex-1 rounded-t-sm ${i>10?"bg-[#c6ff4d]":"bg-white/20"}`}/>)}</div>
+          <div className="mt-3 flex justify-between text-[9px] text-white/30"><span>WEEK 01</span><span>WEEK 04</span><span>WEEK 08</span></div>
+          <div className="mt-7 grid grid-cols-3 gap-2">{[["Consistency","76%"],["Workouts","18"],["Check-ins","24"]].map(([a,b])=><div key={a} className="rounded-xl bg-white/[.04] p-3"><Label>{a}</Label><div className="mt-2 text-xl font-semibold">{b}</div></div>)}</div>
+          <p className="mt-4 text-[9px] text-white/30">Illustrative dashboard data, not real user results.</p>
+        </Panel></Reveal>
+      </div>
+    </section>
 
-      {/* MARKETPLACE — editorial shop cards */}
-      <section id="store" className="bg-[#f2f2ef] px-5 py-24 text-[#080908] md:px-10 md:py-32">
-        <div className="mx-auto max-w-[1320px]">
-          <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end"><div><Eyebrow>04 / The VYTA store</Eyebrow><h2 className="text-5xl font-semibold leading-[.95] tracking-[-.07em] md:text-7xl">Good tools.<br/><span className="text-[#86b900]">Better habits.</span></h2></div><p className="max-w-md text-sm leading-7 text-black/50">A considered marketplace for the products that support your health journey, from training essentials to everyday wellness.</p></div>
-          <div className="mt-14 grid gap-4 md:grid-cols-3">
-            {[
-              ["Training essentials","Equipment for movement, strength and recovery.","https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?auto=format&fit=crop&w=1400&q=90","01"],
-              ["Nutrition & wellness","Everyday essentials to support balanced routines.","https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=1400&q=90","02"],
-              ["Wearables & tech","Tools that help you understand your daily signals.","https://images.unsplash.com/photo-1575311373937-040b8e1fd5b6?auto=format&fit=crop&w=1400&q=90","03"],
-            ].map(([title,desc,img,n],i)=><Reveal key={title} delay={i*.08} className="group overflow-hidden rounded-[26px] bg-white"><div className="relative h-[330px] overflow-hidden"><img src={img} alt={title} className="h-full w-full object-cover transition duration-700 group-hover:scale-105"/><span className="absolute left-5 top-5 rounded-full bg-black/60 px-3 py-2 text-[9px] tracking-widest text-white backdrop-blur-xl">{n} / VYTA SELECT</span></div><div className="p-6"><div className="flex items-center justify-between"><h3 className="text-2xl font-semibold tracking-[-.04em]">{title}</h3><ArrowUpRight size={19}/></div><p className="mt-3 text-sm leading-6 text-black/50">{desc}</p></div></Reveal>)}
-          </div>
-          <p className="mt-5 text-[10px] text-black/35">Marketplace categories are planned concepts. Product availability and partnerships will be announced separately.</p>
+    <section className="relative z-10 px-5 py-24 md:px-10 md:py-32">
+      <div className="mx-auto max-w-[1320px]">
+        <Reveal><Heading tag="05 / Your AI companion" title="Ask better questions" accent="about your habits." copy="The VYTA companion is envisioned to help make your logged information easier to understand. Ask about meal choices, workout structure or patterns in your own activity, and get responses grounded in the context you choose to share."/></Reveal>
+        <div className="mt-12 grid gap-3 lg:grid-cols-[1fr_1fr]">
+          <Reveal><Panel className="h-full p-6 md:p-8"><div className="flex items-center gap-2 text-[#c6ff4d]"><Brain size={18}/><Label>Example conversations</Label></div><div className="mt-7 space-y-4">{["How can I add more protein to my vegetarian meals?","Help me understand my workout progress this month.","I missed two sessions. How should I adjust my week?","What patterns can you see in my food diary?"].map((q,i)=><div key={q} className="flex gap-3 rounded-2xl border border-white/10 bg-black/20 p-4"><span className="text-[10px] text-[#c6ff4d]">0{i+1}</span><p className="text-sm leading-6 text-white/75">{q}</p></div>)}</div></Panel></Reveal>
+          <Reveal delay={.1}><div className="flex h-full flex-col justify-between rounded-[24px] border border-[#c6ff4d]/20 bg-[radial-gradient(circle_at_80%_0%,rgba(198,255,77,.13),transparent_45%),#11140f] p-7 md:p-9"><div><div className="flex items-center gap-2 text-[#c6ff4d]"><Sparkles size={18}/><Label>Designed around your context</Label></div><h3 className="mt-8 max-w-md text-3xl font-semibold leading-tight tracking-[-.05em] md:text-4xl">Your data should help you make your next decision.</h3><p className="mt-5 max-w-md text-sm leading-7 text-white/50">From understanding nutrition estimates to reviewing training consistency, the goal is useful guidance, not another stream of generic tips.</p></div><div className="mt-12 border-t border-white/10 pt-5 text-[10px] leading-5 text-white/35">AI responses can be incomplete or incorrect. VYTA is intended for general wellness support and does not provide medical diagnosis or treatment.</div></div></Reveal>
         </div>
-      </section>
+      </div>
+    </section>
 
-      {/* SOCIAL PROOF / DEVICE ECOSYSTEM */}
-      <section className="px-5 py-24 md:px-10 md:py-32">
-        <div className="mx-auto max-w-[1100px] text-center"><Eyebrow>Built for your everyday</Eyebrow><h2 className="text-4xl font-semibold tracking-[-.06em] md:text-6xl">Your health. Your rhythm.</h2><p className="mx-auto mt-5 max-w-xl text-sm leading-7 text-white/45">A flexible experience designed to grow with your routines, your goals and the technology you already use.</p>
-          <div className="mt-14 grid grid-cols-2 gap-3 sm:grid-cols-4">{[[Watch,"Wearables"],[Activity,"Activity"],[Heart,"Wellness"],[ShieldCheck,"Privacy first"]].map(([Icon,label]:any)=><div key={label} className="rounded-2xl border border-white/10 bg-white/[.035] px-4 py-7"><Icon className="mx-auto text-[#c6ff4d]" size={22}/><p className="mt-4 text-xs text-white/60">{label}</p></div>)}</div>
+    <section className="relative z-10 border-y border-white/[.07] bg-[#0d100b] px-5 py-24 md:px-10 md:py-32">
+      <div className="mx-auto grid max-w-[1320px] gap-12 lg:grid-cols-[.85fr_1.15fr] lg:items-center">
+        <Reveal><div><Eyebrow>06 / VYTA store</Eyebrow><h2 className="text-4xl font-semibold leading-[.98] tracking-[-.065em] md:text-6xl">Useful tools for <span className="text-[#c6ff4d]">your routine.</span></h2><p className="mt-6 max-w-xl text-sm leading-7 text-white/50">A planned discovery space for products that support training, nutrition and everyday wellness. Explore relevant essentials without losing sight of the goals you are working towards.</p><div className="mt-8 inline-flex items-center gap-2 text-xs text-[#c6ff4d]">Explore the VYTA ecosystem <ArrowRight size={14}/></div></div></Reveal>
+        <div className="grid grid-cols-2 gap-3">
+          {[
+            ["Training essentials","Equipment and accessories","https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?auto=format&fit=crop&w=700&q=80"],
+            ["Nutrition support","Everyday nutrition products","https://images.unsplash.com/photo-1579722821273-0f6c7d44362f?auto=format&fit=crop&w=700&q=80"],
+            ["Recovery tools","Tools for rest and mobility","https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=700&q=80"],
+            ["Wellness essentials","Products for daily routines","https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=700&q=80"]
+          ].map(([a,b,img]:any,i)=><Reveal key={a} delay={i*.06}><div className="group overflow-hidden rounded-[20px] border border-white/10 bg-white/[.035]"><div className="overflow-hidden"><img src={img} alt={a} className="h-36 w-full object-cover opacity-75 transition duration-700 group-hover:scale-105 md:h-48"/></div><div className="p-4"><h3 className="text-sm font-semibold">{a}</h3><p className="mt-1 text-[10px] text-white/40">{b}</p></div></div></Reveal>)}
         </div>
-      </section>
+      </div>
+    </section>
 
-      {/* FAQ */}
-      <section id="faq" className="bg-[#10120f] px-5 py-24 md:px-10 md:py-32">
-        <div className="mx-auto grid max-w-[1200px] gap-12 lg:grid-cols-[.75fr_1.25fr]">
-          <div><Eyebrow>Questions, answered</Eyebrow><h2 className="text-5xl font-semibold leading-[.95] tracking-[-.07em] md:text-7xl">A little<br/>more <span className="text-[#c6ff4d]">clarity.</span></h2><p className="mt-6 max-w-sm text-sm leading-7 text-white/45">A few things you might want to know before joining the VYTA early-access list.</p></div>
-          <div className="border-t border-white/10">{faqs.map(([q,a],i)=><div key={q} className="border-b border-white/10"><button onClick={()=>setFaqOpen(faqOpen===i?null:i)} className="flex w-full items-center justify-between gap-5 py-6 text-left"><span className="text-base font-medium md:text-lg">{q}</span><span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-white/15 transition ${faqOpen===i?"rotate-45 bg-[#c6ff4d] text-black":"text-white/55"}`}><Plus size={16}/></span></button><AnimatePresence initial={false}>{faqOpen===i&&<motion.div initial={{height:0,opacity:0}} animate={{height:"auto",opacity:1}} exit={{height:0,opacity:0}} className="overflow-hidden"><p className="max-w-2xl pb-6 pr-12 text-sm leading-7 text-white/45">{a}</p></motion.div>}</AnimatePresence></div>)}</div>
-        </div>
-      </section>
+    <section id="how" className="relative z-10 px-5 py-24 md:px-10 md:py-32">
+      <div className="mx-auto max-w-[1320px]">
+        <Reveal><Heading tag="The everyday VYTA loop" title="From first setup" accent="to better habits." copy="A simple product flow: establish your starting point, choose what you want to work on, log your day and use the patterns to plan the next one."/></Reveal>
+        <div className="mt-14 grid gap-3 md:grid-cols-5">{[
+          [Target,"01","Set your baseline","Add your goals, preferences, activity level and starting measurements."],
+          [CalendarDays,"02","Build your plan","Set nutrition and training priorities that fit your routine."],
+          [Camera,"03","Log your day","Capture meals, record workouts and track everyday habits."],
+          [ChartNoAxesCombined,"04","Review patterns","See trends across nutrition, movement, recovery and progress."],
+          [Sparkles,"05","Adjust and repeat","Use your insights to make practical changes and keep going."]
+        ].map(([Icon,n,a,b]:any,i)=><Reveal key={n} delay={i*.06}><Panel className="h-full p-5"><div className="flex items-center justify-between"><Icon size={19} className="text-[#c6ff4d]"/><span className="text-[10px] text-white/25">{n}</span></div><h3 className="mt-8 text-base font-semibold">{a}</h3><p className="mt-3 text-xs leading-6 text-white/45">{b}</p></Panel></Reveal>)}</div>
+      </div>
+    </section>
 
-      {/* EARLY ACCESS */}
-      <section id="register" className="relative overflow-hidden px-5 py-24 md:px-10 md:py-36">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_100%,rgba(166,255,0,.17),transparent_55%)]"/>
-        <div className="relative mx-auto max-w-[1000px] rounded-[32px] border border-white/12 bg-white/[.045] p-6 shadow-[0_30px_100px_rgba(0,0,0,.3)] backdrop-blur-2xl md:p-14">
-          <div className="grid gap-10 md:grid-cols-[1fr_.9fr] md:items-center">
-            <div><Eyebrow>Your next chapter</Eyebrow><h2 className="text-5xl font-semibold leading-[.94] tracking-[-.07em] md:text-7xl">Make health<br/>feel <span className="text-[#c6ff4d]">personal.</span></h2><p className="mt-6 max-w-sm text-sm leading-7 text-white/45">Be among the first to experience VYTA. Join the early-access list for product updates and launch news.</p><div className="mt-8 flex items-center gap-3 text-[10px] uppercase tracking-[.18em] text-white/30"><ShieldCheck size={15} className="text-[#c6ff4d]"/> No spam. Just meaningful updates.</div></div>
-            <div>
-              {submitted?<div className="rounded-2xl border border-[#c6ff4d]/25 bg-[#c6ff4d]/10 p-7"><div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#c6ff4d] text-black"><Check size={22}/></div><h3 className="mt-5 text-2xl font-semibold">You&apos;re on the list.</h3><p className="mt-2 text-sm leading-6 text-white/55">Thanks for your interest in VYTA. This demo currently shows the confirmation locally; connect a backend to store registrations.</p></div>:<form onSubmit={(e)=>{e.preventDefault();setSubmitted(true)}} className="space-y-3">
-                <input required type="text" placeholder="Your name" className="w-full rounded-xl border border-white/12 bg-black/25 px-4 py-4 text-sm outline-none transition placeholder:text-white/30 focus:border-[#c6ff4d]/60"/>
-                <input required type="email" placeholder="Email address" className="w-full rounded-xl border border-white/12 bg-black/25 px-4 py-4 text-sm outline-none transition placeholder:text-white/30 focus:border-[#c6ff4d]/60"/>
-                <select value={goal} onChange={e=>setGoal(e.target.value)} className="w-full rounded-xl border border-white/12 bg-[#11130f] px-4 py-4 text-sm text-white/70 outline-none focus:border-[#c6ff4d]/60"><option>Build healthier habits</option><option>Weight management</option><option>Build strength</option><option>Improve fitness</option><option>Understand my nutrition</option></select>
-                <select value={diet} onChange={e=>setDiet(e.target.value)} className="w-full rounded-xl border border-white/12 bg-[#11130f] px-4 py-4 text-sm text-white/70 outline-none focus:border-[#c6ff4d]/60"><option>Vegetarian</option><option>Vegan</option><option>Non-vegetarian</option><option>No preference</option></select>
-                <button type="submit" className="group flex w-full items-center justify-between rounded-xl bg-[#c6ff4d] px-5 py-4 text-sm font-bold text-black transition hover:bg-white">Join the early-access list<span className="flex h-8 w-8 items-center justify-center rounded-full bg-black text-[#c6ff4d] transition group-hover:rotate-45"><ArrowUpRight size={16}/></span></button>
-                <p className="pt-1 text-[9px] leading-5 text-white/25">By joining, you agree to receive VYTA product updates. Form submissions are not stored until a backend is connected.</p>
-              </form>}
-            </div>
-          </div>
-        </div>
-      </section>
+    <section id="faq" className="relative z-10 border-t border-white/[.07] bg-[#0d100b] px-5 py-24 md:px-10 md:py-28">
+      <div className="mx-auto grid max-w-[1320px] gap-12 lg:grid-cols-[.7fr_1.3fr]">
+        <Reveal><div><Eyebrow>Questions, answered</Eyebrow><h2 className="text-4xl font-semibold leading-[.98] tracking-[-.065em] md:text-6xl">Before you <span className="text-[#c6ff4d]">begin.</span></h2><p className="mt-6 max-w-sm text-sm leading-7 text-white/45">A few important details about what VYTA is being built to do.</p></div></Reveal>
+        <div className="space-y-2">{faqs.map(([q,a],i)=><Reveal key={q} delay={i*.04}><div className="border-b border-white/10"><button onClick={()=>setFaqOpen(faqOpen===i?null:i)} className="flex w-full items-center justify-between gap-4 py-5 text-left text-sm font-medium"><span>{q}</span><ChevronDown size={17} className={`shrink-0 text-[#c6ff4d] transition ${faqOpen===i?"rotate-180":""}`}/></button><AnimatePresence>{faqOpen===i&&<motion.div initial={{height:0,opacity:0}} animate={{height:"auto",opacity:1}} exit={{height:0,opacity:0}} className="overflow-hidden"><p className="max-w-2xl pb-6 text-xs leading-7 text-white/45">{a}</p></motion.div>}</AnimatePresence></div></Reveal>)}</div>
+      </div>
+    </section>
 
-      {/* FOOTER */}
-      <footer className="border-t border-white/10 px-5 py-10 md:px-10">
-        <div className="mx-auto max-w-[1320px]">
-          <div className="flex flex-col justify-between gap-8 md:flex-row md:items-center">
-            <div><a href="#home" className="text-3xl font-black tracking-[-.09em]">VYTA<span className="text-[#c6ff4d]">.</span></a><p className="mt-3 max-w-xs text-xs leading-6 text-white/35">A more connected way to understand and care for your health.</p></div>
-            <div className="flex flex-wrap gap-x-8 gap-y-3 text-xs text-white/50">{[["Product","#product"],["Nutrition","#nutrition"],["Fitness","#fitness"],["Store","#store"],["FAQ","#faq"],["Early access","#register"]].map(([l,h])=><a key={h} href={h} className="transition hover:text-[#c6ff4d]">{l}</a>)}</div>
-            <a href="#home" className="flex h-11 w-11 items-center justify-center rounded-full border border-white/15 transition hover:border-[#c6ff4d] hover:text-[#c6ff4d]"><ArrowUpRight size={18}/></a>
-          </div>
-          <div className="mt-10 flex flex-col justify-between gap-3 border-t border-white/10 pt-6 text-[9px] uppercase tracking-[.16em] text-white/25 sm:flex-row"><span>© 2026 VYTA. All rights reserved.</span><span>Designed for a more connected health journey.</span></div>
-        </div>
-      </footer>
-    </main>
-  );
+    <section id="waitlist" className="relative z-10 overflow-hidden px-5 py-24 md:px-10 md:py-32">
+      <div className="absolute left-1/2 top-1/2 h-[500px] w-[700px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#c6ff4d]/[.08] blur-[120px]"/>
+      <Reveal><div className="relative mx-auto max-w-4xl rounded-[30px] border border-[#c6ff4d]/20 bg-[#11140f]/90 px-6 py-12 text-center shadow-[0_30px_100px_rgba(0,0,0,.4)] md:px-14 md:py-16">
+        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-[#c6ff4d] text-black"><HeartPulse size={23}/></div>
+        <Eyebrow>Be part of the beginning</Eyebrow>
+        <h2 className="mx-auto max-w-2xl text-4xl font-semibold leading-[.98] tracking-[-.065em] md:text-6xl">Make your next health chapter <span className="text-[#c6ff4d]">a conscious one.</span></h2>
+        <p className="mx-auto mt-6 max-w-xl text-sm leading-7 text-white/45">Join the early-access list to follow VYTA's progress and hear when registration opens.</p>
+        {submitted ? <div className="mx-auto mt-8 flex max-w-md items-center justify-center gap-2 rounded-xl border border-[#c6ff4d]/20 bg-[#c6ff4d]/10 p-4 text-sm text-[#c6ff4d]"><Check size={17}/> Thanks. Your email is ready for the waitlist integration.</div> :
+          <form onSubmit={submitWaitlist} className="mx-auto mt-8 flex max-w-lg flex-col gap-2 sm:flex-row"><input type="email" required value={email} onChange={e=>setEmail(e.target.value)} placeholder="Enter your email address" className="min-w-0 flex-1 rounded-full border border-white/15 bg-black/30 px-5 py-4 text-xs text-white outline-none placeholder:text-white/30 focus:border-[#c6ff4d]/60"/><button className="rounded-full bg-[#c6ff4d] px-7 py-4 text-xs font-bold text-black transition hover:scale-[1.03]">Request early access <ArrowUpRight className="ml-2 inline" size={14}/></button></form>}
+        <p className="mt-5 text-[9px] text-white/25">Waitlist form is a visual prototype. Connect a backend or form service before collecting real registrations.</p>
+      </div></Reveal>
+    </section>
+
+    <footer className="relative z-10 border-t border-white/[.08] px-5 py-8 md:px-10">
+      <div className="mx-auto flex max-w-[1320px] flex-col items-center justify-between gap-4 text-center sm:flex-row sm:text-left"><a href="#" className="text-lg font-black tracking-[-.08em]">VYTA<span className="text-[#c6ff4d]">.</span></a><p className="text-[10px] text-white/30">A more connected approach to everyday health.</p><div className="flex gap-5 text-[10px] text-white/40"><a href="#platform" className="hover:text-[#c6ff4d]">Platform</a><a href="#faq" className="hover:text-[#c6ff4d]">FAQ</a><a href="#waitlist" className="hover:text-[#c6ff4d]">Early access</a></div></div>
+      <p className="mx-auto mt-7 max-w-[1320px] text-[9px] leading-5 text-white/25">VYTA is a wellness and fitness product concept. It is not a medical device and does not diagnose, treat or prevent disease. Consult qualified professionals for individual medical or dietary advice. Features and integrations shown may be planned, illustrative or subject to change.</p>
+    </footer>
+  </main>;
 }
