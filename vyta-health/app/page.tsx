@@ -1,64 +1,64 @@
+ "use client";
 
-"use client";
-
-import { useState, useRef } from "react";
+import { useState } from "react";
+import type { ReactNode } from "react";
 import {
   motion,
   useScroll,
   useTransform,
+  useSpring,
+  AnimatePresence,
 } from "framer-motion";
-
 import {
-  ArrowDown,
+  ArrowDownRight,
   ArrowRight,
-  Menu,
-  X,
-  Sparkles,
-  Camera,
-  Flame,
+  ArrowUpRight,
   Activity,
-  Check,
-  Utensils,
-  Target,
-  Salad,
-  Clock,
-  ChevronRight,
-  Leaf,
-  Dumbbell,
-  Moon,
-  Droplets,
-  Watch,
-  Heart,
-  ShoppingBag,
-  ShieldCheck,
-  Zap,
-  TrendingUp,
-  Footprints,
-  Brain,
   Apple,
-  Star,
+  Brain,
+  Camera,
+  Check,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  CircleHelp,
+  Clock3,
+  Dumbbell,
+  Flame,
+  Heart,
+  Leaf,
+  Menu,
+  Moon,
   Plus,
+  ScanLine,
+  ShieldCheck,
+  ShoppingBag,
+  Sparkles,
+  Target,
+  Watch,
+  X,
+  Zap,
+  Droplets,
+  Footprints,
 } from "lucide-react";
 
-// ==========================================
-// REUSABLE COMPONENTS
-// ==========================================
+const lime = "#C6FF4D";
 
 function Reveal({
   children,
   className = "",
   delay = 0,
 }: {
-  children: React.ReactNode;
+  children: ReactNode;
   className?: string;
   delay?: number;
 }) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 35 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.15 }}
-      transition={{ duration: 0.7, delay }}
+      initial={{ opacity: 0, y: 42, scale: 0.985, filter: "blur(10px)" }}
+      whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
+      viewport={{ once: true, amount: 0.16 }}
+      transition={{ duration: 0.95, delay, ease: [0.22, 1, 0.36, 1] }}
       className={className}
     >
       {children}
@@ -66,1927 +66,365 @@ function Reveal({
   );
 }
 
-function SectionHeading({
-  number,
-  eyebrow,
-  title,
-  highlight,
-  description,
-}: {
-  number: string;
-  eyebrow: string;
-  title: string;
-  highlight: string;
-  description: string;
-}) {
+function Eyebrow({ children }: { children: ReactNode }) {
   return (
-    <Reveal className="max-w-4xl mb-16 md:mb-20">
-      <div className="flex items-center gap-3 text-[#c6ff4d] text-xs tracking-[4px] uppercase mb-8">
-        <span>{number}</span>
-        <span className="w-8 h-px bg-[#c6ff4d]/50" />
-        {eyebrow}
-      </div>
-
-      <h2 className="text-5xl sm:text-6xl md:text-8xl font-semibold tracking-[-0.08em] leading-[1.02]">
-        {title}
-        <br />
-        <span className="text-[#c6ff4d]">{highlight}</span>
-      </h2>
-
-      <p className="max-w-2xl text-white/50 text-base md:text-xl mt-8 leading-relaxed">
-        {description}
-      </p>
-    </Reveal>
+    <motion.div
+      initial={{ opacity: 0, x: -14 }}
+      whileInView={{ opacity: 1, x: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
+      className="mb-5 flex items-center gap-3 text-[10px] font-semibold uppercase tracking-[.28em] text-[#c6ff4d] md:text-xs"
+    >
+      <motion.span initial={{ width: 0 }} whileInView={{ width: 28 }} viewport={{ once: true }} transition={{ duration: .8, delay: .12 }} className="h-px bg-[#c6ff4d]" />
+      {children}
+    </motion.div>
   );
 }
 
-const lime = "#c6ff4d";
+function SectionTitle({
+  eyebrow,
+  title,
+  accent,
+  description,
+  center = false,
+}: {
+  eyebrow: string;
+  title: string;
+  accent?: string;
+  description: string;
+  center?: boolean;
+}) {
+  return (
+    <div className={`${center ? "mx-auto text-center" : ""} max-w-3xl`}>
+      <div className={center ? "flex justify-center" : ""}>
+        <Eyebrow>{eyebrow}</Eyebrow>
+      </div>
+      <motion.h2
+        initial={{ opacity: 0, y: 28, clipPath: "inset(0 0 35% 0)" }}
+        whileInView={{ opacity: 1, y: 0, clipPath: "inset(0 0 0% 0)" }}
+        viewport={{ once: true }}
+        transition={{ duration: .9, ease: [0.22, 1, 0.36, 1] }}
+        className="text-balance text-4xl font-semibold leading-[.98] tracking-[-.065em] text-[#f5f6f2] sm:text-5xl md:text-7xl"
+      >
+        {title} {accent && <span className="text-[#c6ff4d]">{accent}</span>}
+      </motion.h2>
+      <motion.p
+        initial={{ opacity: 0, y: 18 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: .75, delay: .18 }}
+        className={`mt-6 max-w-2xl text-sm leading-7 text-white/48 md:text-base md:leading-8 ${center ? "mx-auto" : ""}`}
+      >
+        {description}
+      </motion.p>
+    </div>
+  );
+}
 
-// ==========================================
-// MAIN PAGE
-// ==========================================
+function GlassCard({
+  children,
+  className = "",
+}: {
+  children: ReactNode;
+  className?: string;
+}) {
+  return (
+    <motion.div
+      whileHover={{ y: -6, borderColor: "rgba(198,255,77,.32)", transition: { duration: .25 } }}
+      className={`rounded-[24px] border border-white/[.12] bg-white/[.055] shadow-[inset_0_1px_0_rgba(255,255,255,.09),0_24px_80px_rgba(0,0,0,.24)] backdrop-blur-2xl ${className}`}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+function DashboardMockup() {
+  const bars = [36, 58, 44, 78, 54, 92, 66, 83, 48, 72, 60, 100, 68, 88];
+  return (
+    <div className="relative mx-auto w-full max-w-[1120px]">
+      <div className="absolute -inset-8 rounded-[50%] bg-[#a6ff00]/[.10] blur-[90px]" />
+      <div className="relative overflow-hidden rounded-t-[26px] border border-white/15 bg-[#10120f] shadow-[0_40px_120px_rgba(0,0,0,.65)]">
+        <div className="flex h-14 items-center justify-between border-b border-white/10 px-4 md:px-7">
+          <div className="flex items-center gap-2 text-sm font-bold tracking-tight">VYTA<span className="text-[#c6ff4d]">.</span></div>
+          <div className="hidden items-center gap-6 text-[10px] text-white/35 sm:flex">
+            <span className="text-[#c6ff4d]">Overview</span><span>Nutrition</span><span>Activity</span><span>Recovery</span>
+          </div>
+          <div className="flex items-center gap-2"><span className="h-2 w-2 rounded-full bg-[#c6ff4d] shadow-[0_0_12px_#c6ff4d]" /><span className="text-[9px] uppercase tracking-widest text-white/45">Your health space</span></div>
+        </div>
+        <div className="grid gap-4 p-4 md:grid-cols-[1.2fr_.8fr] md:p-7">
+          <div className="space-y-4">
+            <div className="flex items-end justify-between">
+              <div><p className="text-[10px] uppercase tracking-[.2em] text-white/35">Monday, your overview</p><h3 className="mt-2 text-2xl font-semibold tracking-tight md:text-3xl">Good morning.</h3></div>
+              <span className="rounded-full border border-[#c6ff4d]/20 bg-[#c6ff4d]/10 px-3 py-1.5 text-[9px] text-[#c6ff4d]">DAILY PULSE</span>
+            </div>
+            <div className="grid grid-cols-3 gap-2 md:gap-3">
+              {[["1,640","KCAL IN",Flame],["8,420","STEPS",Footprints],["7h 42m","SLEEP",Moon]].map(([value,label,Icon]: any) => (
+                <div key={label} className="rounded-2xl border border-white/10 bg-white/[.045] p-3 md:p-4">
+                  <Icon size={15} className="mb-4 text-[#c6ff4d]" />
+                  <div className="text-lg font-semibold md:text-2xl">{value}</div><div className="mt-1 text-[8px] tracking-[.18em] text-white/35 md:text-[9px]">{label}</div>
+                </div>
+              ))}
+            </div>
+            <div className="rounded-2xl border border-white/10 bg-white/[.035] p-4 md:p-5">
+              <div className="flex items-center justify-between"><div><p className="text-[9px] uppercase tracking-[.2em] text-white/35">Activity rhythm</p><p className="mt-1 text-sm font-medium">Movement this week</p></div><span className="text-[10px] text-[#c6ff4d]">+12.8%</span></div>
+              <div className="mt-5 flex h-24 items-end gap-1.5 md:h-32 md:gap-2">{bars.map((v,i)=><motion.div key={i} initial={{height:0}} whileInView={{height:`${v}%`}} viewport={{once:true}} transition={{duration:.65,delay:i*.035}} className={`flex-1 rounded-t-md ${i===11?"bg-[#c6ff4d]":"bg-white/15"}`} />)}</div>
+              <div className="mt-3 flex justify-between text-[8px] uppercase tracking-widest text-white/25"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div>
+            </div>
+          </div>
+          <div className="space-y-4">
+            <div className="rounded-2xl border border-[#c6ff4d]/20 bg-[radial-gradient(circle_at_80%_0%,rgba(198,255,77,.15),transparent_55%),rgba(255,255,255,.035)] p-5 md:p-6">
+              <div className="flex items-center justify-between"><span className="text-[9px] uppercase tracking-[.2em] text-white/40">Your daily focus</span><Target size={16} className="text-[#c6ff4d]"/></div>
+              <div className="mt-7 text-4xl font-semibold tracking-tight">72<span className="text-lg text-white/35">%</span></div><p className="mt-1 text-xs text-white/45">A little progress, every day.</p>
+              <div className="mt-5 h-1.5 overflow-hidden rounded-full bg-white/10"><motion.div initial={{width:0}} whileInView={{width:"72%"}} viewport={{once:true}} transition={{duration:1.1}} className="h-full rounded-full bg-[#c6ff4d]"/></div>
+              <div className="mt-5 flex items-center gap-2 text-[10px] text-[#c6ff4d]"><Check size={13}/> Consistency is building</div>
+            </div>
+            <div className="rounded-2xl border border-white/10 bg-white/[.035] p-5">
+              <div className="flex items-center justify-between"><span className="text-[9px] uppercase tracking-[.2em] text-white/35">AI companion</span><Sparkles size={15} className="text-[#c6ff4d]"/></div>
+              <p className="mt-5 text-lg font-medium leading-snug">Your week is taking shape.</p>
+              <p className="mt-2 text-xs leading-6 text-white/40">You have been moving more consistently. Keep your recovery in focus today.</p>
+              <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-[#c6ff4d] px-3 py-2 text-[9px] font-bold text-black">View insight <ArrowUpRight size={12}/></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function OrbitVisual() {
+  const nodes = [
+    { label: "Nutrition", icon: Apple, x: "50%", y: "2%" },
+    { label: "Movement", icon: Activity, x: "84%", y: "25%" },
+    { label: "Recovery", icon: Moon, x: "84%", y: "72%" },
+    { label: "Mindset", icon: Brain, x: "50%", y: "91%" },
+    { label: "Hydration", icon: Droplets, x: "16%", y: "72%" },
+    { label: "Progress", icon: Target, x: "16%", y: "25%" },
+  ];
+  return (
+    <div className="relative mx-auto aspect-square w-full max-w-[560px]">
+      <motion.div animate={{rotate:360}} transition={{duration:70,repeat:Infinity,ease:"linear"}} className="absolute inset-[8%] rounded-full border border-dashed border-[#c6ff4d]/20"/>
+      <motion.div animate={{rotate:-360}} transition={{duration:95,repeat:Infinity,ease:"linear"}} className="absolute inset-[21%] rounded-full border border-white/10"/>
+      <div className="absolute inset-[34%] rounded-full bg-[#c6ff4d]/10 blur-3xl"/>
+      <div className="absolute inset-[34%] flex flex-col items-center justify-center rounded-full border border-[#c6ff4d]/40 bg-[#c6ff4d] text-black shadow-[0_0_90px_rgba(198,255,77,.28)]">
+        <span className="text-4xl font-black tracking-[-.08em]">V.</span><span className="mt-1 text-[8px] font-bold uppercase tracking-[.2em]">One connected you</span>
+      </div>
+      {nodes.map(({label,icon:Icon,x,y},i)=>(
+        <motion.div key={label} animate={{y:[0,-8,0]}} transition={{duration:3.5+i*.35,repeat:Infinity,ease:"easeInOut",delay:i*.2}} style={{left:x,top:y,transform:"translate(-50%,-50%)"}} className="absolute flex -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-2">
+          <div className="flex h-12 w-12 items-center justify-center rounded-full border border-white/15 bg-[#171a14]/90 shadow-[0_10px_35px_rgba(0,0,0,.4)] backdrop-blur-xl md:h-16 md:w-16"><Icon className="text-[#c6ff4d]" size={22}/></div>
+          <span className="text-[8px] uppercase tracking-[.15em] text-white/45 md:text-[9px]">{label}</span>
+        </motion.div>
+      ))}
+    </div>
+  );
+}
 
 export default function Home() {
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [dietPreference, setDietPreference] = useState("Vegetarian");
-  const [goal, setGoal] = useState("Weight management");
-  const [faqOpen, setFaqOpen] = useState<number | null>(0);
-  const [submitted, setSubmitted] = useState(false);
+  const [menuOpen,setMenuOpen] = useState(false);
+  const [goal,setGoal] = useState("Build healthier habits");
+  const [diet,setDiet] = useState("Vegetarian");
+  const [submitted,setSubmitted] = useState(false);
+  const [faqOpen,setFaqOpen] = useState<number|null>(0);
+  const [activeFeature,setActiveFeature] = useState(0);
+  const {scrollYProgress} = useScroll();
+  const progress = useSpring(scrollYProgress,{stiffness:100,damping:30,mass:.2});
 
-  // SCROLL PROGRESS
-  const { scrollYProgress } = useScroll();
+  const nav = [["Product","#product"],["Nutrition","#nutrition"],["Fitness","#fitness"],["Store","#store"]];
 
-  // HERO SCROLL ANIMATION
-const heroY = useTransform(
-  scrollYProgress,
-  [0, 0.12],
-  [0, -35]
-);
-
-const heroOpacity = useTransform(
-  scrollYProgress,
-  [0, 0.12],
-  [1, 0.5]
-);
-
-  // SECTION 02 SCROLL STORY
-  const storyRef = useRef<HTMLElement>(null);
-
-  const { scrollYProgress: storyProgress } = useScroll({
-    target: storyRef,
-    offset: ["start start", "end end"],
-  });
-
-  const firstOpacity = useTransform(
-    storyProgress,
-    [0, 0.15, 0.35],
-    [1, 1, 0]
-  );
-
-  const firstY = useTransform(
-    storyProgress,
-    [0, 0.3],
-    [0, -45]
-  );
-
-  const secondOpacity = useTransform(
-    storyProgress,
-    [0.15, 0.4, 0.65],
-    [0, 1, 1]
-  );
-
-  const secondY = useTransform(
-    storyProgress,
-    [0.15, 0.4],
-    [55, 0]
-  );
-
-  const descriptionOpacity = useTransform(
-    storyProgress,
-    [0.35, 0.55, 0.75],
-    [0, 1, 1]
-  );
-
-  const closingOpacity = useTransform(
-    storyProgress,
-    [0.65, 0.85],
-    [0, 1]
-  );
-
-  const storyLineScale = useTransform(
-    storyProgress,
-    [0, 1],
-    [0, 1]
-  );
-
-  // DIET DEMONSTRATION DATA
-  const dietData: Record<
-    string,
-    {
-      calories: string;
-      protein: string;
-      carbs: string;
-      fats: string;
-      meals: {
-        time: string;
-        name: string;
-        description: string;
-        calories: string;
-        image: string;
-      }[];
-    }
-  > = {
-    Vegetarian: {
-      calories: "2,000",
-      protein: "120g",
-      carbs: "220g",
-      fats: "65g",
-      meals: [
-        {
-          time: "08:00 AM",
-          name: "Power breakfast",
-          description: "Paneer bhurji, toast and curd",
-          calories: "420 kcal",
-          image: "https://images.unsplash.com/photo-1525351484163-7529414344d8?w=500",
-        },
-        {
-          time: "01:00 PM",
-          name: "Balanced lunch",
-          description: "Dal, roti, rice and vegetables",
-          calories: "580 kcal",
-          image: "https://images.unsplash.com/photo-1547592180-85f173990554?w=500",
-        },
-        {
-          time: "04:30 PM",
-          name: "Evening snack",
-          description: "Roasted chana and fresh fruit",
-          calories: "250 kcal",
-          image: "https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=500",
-        },
-        {
-          time: "08:00 PM",
-          name: "Recovery dinner",
-          description: "Tofu, vegetables and roti",
-          calories: "550 kcal",
-          image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=500",
-        },
-      ],
-    },
-
-    Vegan: {
-      calories: "2,000",
-      protein: "110g",
-      carbs: "230g",
-      fats: "65g",
-      meals: [
-        {
-          time: "08:00 AM",
-          name: "Power breakfast",
-          description: "Oats, soy milk and chia seeds",
-          calories: "420 kcal",
-          image: "https://images.unsplash.com/photo-1517673132405-a56a62b18caf?w=500",
-        },
-        {
-          time: "01:00 PM",
-          name: "Plant-powered lunch",
-          description: "Chickpeas, quinoa and vegetables",
-          calories: "580 kcal",
-          image: "https://images.unsplash.com/photo-1547592180-85f173990554?w=500",
-        },
-        {
-          time: "04:30 PM",
-          name: "Evening snack",
-          description: "Roasted chickpeas and fruit",
-          calories: "250 kcal",
-          image: "https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=500",
-        },
-        {
-          time: "08:00 PM",
-          name: "Recovery dinner",
-          description: "Tofu, lentils and vegetables",
-          calories: "550 kcal",
-          image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=500",
-        },
-      ],
-    },
-
-    "Non-Vegetarian": {
-      calories: "2,000",
-      protein: "140g",
-      carbs: "210g",
-      fats: "60g",
-      meals: [
-        {
-          time: "08:00 AM",
-          name: "Power breakfast",
-          description: "Oats, Greek yogurt and fruit",
-          calories: "400 kcal",
-          image: "https://images.unsplash.com/photo-1517673132405-a56a62b18caf?w=500",
-        },
-        {
-          time: "01:00 PM",
-          name: "Protein lunch",
-          description: "Grilled chicken, rice and vegetables",
-          calories: "600 kcal",
-          image: "https://images.unsplash.com/photo-1547592180-85f173990554?w=500",
-        },
-        {
-          time: "04:30 PM",
-          name: "Evening snack",
-          description: "Greek yogurt, nuts and fruit",
-          calories: "250 kcal",
-          image: "https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=500",
-        },
-        {
-          time: "08:00 PM",
-          name: "Recovery dinner",
-          description: "Fish, vegetables and rice",
-          calories: "550 kcal",
-          image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=500",
-        },
-      ],
-    },
-  };
-
-  const currentDiet = dietData[dietPreference];
-
-  const navLinks = [
-    ["Intelligence", "#intelligence"],
-    ["Nutrition", "#nutrition"],
-    ["Fitness", "#fitness"],
-    ["Marketplace", "#store"],
+  const features = [
+    {n:"01",title:"Smart nutrition",desc:"Understand what is on your plate and make more informed choices with meal insights and flexible planning.",icon:Apple,tag:"EAT WITH INTENTION"},
+    {n:"02",title:"Adaptive fitness",desc:"Build routines around your goals, your ability and your real life. Progress at a pace you can sustain.",icon:Dumbbell,tag:"MOVE WITH PURPOSE"},
+    {n:"03",title:"Recovery intelligence",desc:"Bring sleep, hydration and daily recovery habits into the same picture as your training.",icon:Moon,tag:"RECOVER WITH CLARITY"},
   ];
 
   const faqs = [
-    {
-      question: "What exactly is VYTA?",
-      answer:
-        "VYTA is an AI-powered health companion designed to bring nutrition tracking, personalized meal planning, fitness, health insights and wellness shopping into one connected experience.",
-    },
-    {
-      question: "How will AI food recognition work?",
-      answer:
-        "The planned experience lets users capture a meal and receive an estimated nutritional breakdown. Estimates can vary depending on ingredients, portion sizes and image quality.",
-    },
-    {
-      question: "Can I follow a vegetarian diet?",
-      answer:
-        "Yes. VYTA is being designed to support vegetarian, vegan and non-vegetarian preferences, alongside different dietary goals.",
-    },
-    {
-      question: "Will VYTA create workout plans?",
-      answer:
-        "The fitness experience is planned to include workout recommendations, exercise instructions, activity tracking and progress insights.",
-    },
-    {
-      question: "Will my health data be private?",
-      answer:
-        "Privacy and responsible handling of personal health information will be essential to the product. Detailed data practices will be published before launch.",
-    },
-    {
-      question: "When will VYTA launch?",
-      answer:
-        "VYTA is currently being developed. Join the early-access list to receive launch announcements and product updates.",
-    },
-    {
-      question: "Will there be a VYTA Store?",
-      answer:
-        "The planned marketplace will bring together relevant fitness equipment, accessories, nutrition products and wellness essentials.",
-    },
+    ["What is VYTA?","VYTA is being designed as an AI-powered health companion that brings nutrition, fitness, recovery and personal progress into one connected experience."],
+    ["Is the AI food scanner available now?","The food-scanning experience shown here is a product concept. Nutrition estimates will need to be checked and adjusted by users, and may vary with ingredients and portion sizes."],
+    ["Can I choose my diet preference?","The planned experience includes vegetarian, vegan and non-vegetarian preferences, with meal ideas shaped around individual goals."],
+    ["Will VYTA include workouts?","Yes. The planned fitness experience includes goal-based workout guidance, activity tracking and progress insights."],
+    ["Does VYTA connect to wearables?","Wearable and health-platform connections are part of the product direction. Supported devices and integrations will be confirmed closer to launch."],
+    ["When will VYTA launch?","VYTA is in development. Join the early-access list to hear about product progress and launch availability."],
   ];
 
   return (
-    <main className="min-h-screen bg-[#080a09] text-[#f5f6f0] overflow-x-clip">
-
-      {/* GLOBAL PROGRESS */}
-
-      <motion.div
-        className="fixed top-0 left-0 right-0 h-[2px] bg-[#c6ff4d] origin-left z-[100]"
-        style={{ scaleX: scrollYProgress }}
-      />
-
-      {/* =====================================
-          NAVIGATION
-      ===================================== */}
-
-      <header className="fixed top-0 w-full z-50 border-b border-white/10 bg-[#080a09]/90 backdrop-blur-xl">
-
-        <div className="max-w-[1440px] mx-auto px-6 md:px-12 h-[76px] flex items-center justify-between">
-
-          <a href="#" className="text-3xl font-extrabold tracking-[-3px]">
-            VYTA<span className="text-[#c6ff4d]">.</span>
-          </a>
-
-          <nav className="hidden md:flex items-center gap-10 text-sm text-white/65">
-            {navLinks.map(([label, href]) => (
-              <a
-                key={href}
-                href={href}
-                className="hover:text-[#c6ff4d] transition-colors"
-              >
-                {label}
-              </a>
-            ))}
+    <main className="min-h-screen overflow-x-clip bg-[#070807] text-[#f5f6f2] selection:bg-[#c6ff4d] selection:text-black">
+      <motion.div style={{scaleX:progress}} className="fixed left-0 right-0 top-0 z-[100] h-[2px] origin-left bg-[#c6ff4d]"/>
+      <header className="fixed left-0 right-0 top-0 z-50 px-3 pt-3 md:px-8 md:pt-5">
+        <div className="mx-auto flex h-[66px] max-w-[1450px] items-center justify-between rounded-full border border-white/[.13] bg-[#0a0b09]/75 px-5 shadow-[0_12px_50px_rgba(0,0,0,.35)] backdrop-blur-2xl md:px-8">
+          <a href="#home" className="text-2xl font-black tracking-[-.09em] md:text-[27px]">VYTA<span className="text-[#c6ff4d]">.</span></a>
+          <nav className="hidden items-center gap-1 rounded-full border border-white/10 bg-black/25 p-1 md:flex">
+            {nav.map(([label,href])=><motion.a key={href} href={href} whileHover={{ y: -2, color: "#ffffff" }} whileTap={{ scale: .96 }} className="rounded-full px-5 py-2.5 text-xs text-white/65 transition hover:bg-white/10">{label}</motion.a>)}
+            <a href="#ecosystem" className="rounded-full px-5 py-2.5 text-xs text-white/65 transition hover:bg-white/10 hover:text-white">Ecosystem</a>
           </nav>
-
-          <a
-            href="#register"
-            className="hidden md:flex items-center gap-2 rounded-full bg-[#c6ff4d] text-black px-6 py-3 text-sm font-bold hover:bg-white transition"
-          >
-            Get Early Access
-            <ArrowRight size={16} />
-          </a>
-
-          <button
-            onClick={() => setMenuOpen(!menuOpen)}
-            className="md:hidden text-white"
-            aria-label="Toggle navigation"
-          >
-            {menuOpen ? <X size={28} /> : <Menu size={28} />}
-          </button>
-
-        </div>
-
-        {menuOpen && (
-          <div className="md:hidden bg-[#101310] px-6 py-7 flex flex-col gap-6 border-t border-white/10">
-            {navLinks.map(([label, href]) => (
-              <a
-                key={href}
-                href={href}
-                onClick={() => setMenuOpen(false)}
-                className="text-white/80 hover:text-[#c6ff4d]"
-              >
-                {label}
-              </a>
-            ))}
-
-            <a
-              href="#register"
-              onClick={() => setMenuOpen(false)}
-              className="text-[#c6ff4d] font-bold"
-            >
-              Get Early Access
-            </a>
+          <div className="hidden items-center gap-3 md:flex">
+            <a href="#faq" className="rounded-full bg-white/[.08] px-5 py-3 text-xs font-medium text-white/80 transition hover:bg-white/15">Explore</a>
+            <a href="#register" whileHover={{ scale: 1.045, boxShadow: "0 0 35px rgba(198,255,77,.22)" }} whileTap={{ scale: .97 }} className="group flex items-center gap-3 rounded-full bg-[#c6ff4d] py-1.5 pl-5 pr-1.5 text-xs font-bold text-black transition hover:scale-[1.03]">Get early access<span className="flex h-9 w-9 items-center justify-center rounded-full bg-black text-[#c6ff4d] transition group-hover:rotate-45"><ArrowUpRight size={17}/></span></a>
           </div>
-        )}
-
+          <button onClick={()=>setMenuOpen(!menuOpen)} aria-label="Toggle menu" className="rounded-full border border-white/15 p-2.5 md:hidden">{menuOpen?<X size={19}/>:<Menu size={19}/>}</button>
+        </div>
+        <AnimatePresence>
+          {menuOpen&&<motion.div initial={{opacity:0,y:-10}} animate={{opacity:1,y:0}} exit={{opacity:0,y:-10}} className="mx-3 mt-2 flex flex-col gap-1 rounded-3xl border border-white/10 bg-[#10120f]/95 p-4 backdrop-blur-2xl md:hidden">
+            {[...nav,["Ecosystem","#ecosystem"],["FAQ","#faq"],["Early access","#register"]].map(([label,href])=><a key={href} href={href} onClick={()=>setMenuOpen(false)} className="rounded-xl px-4 py-3 text-sm text-white/75 hover:bg-white/5">{label}</a>)}
+          </motion.div>}
+        </AnimatePresence>
       </header>
 
-
-      {/* =====================================
-          01 — HERO
-      ===================================== */}
-
-      <section
-        id="home"
-        className="relative min-h-[100svh] flex items-center justify-center text-center px-5 pt-28 pb-24"
-      >
-
-        <div
-          className="absolute inset-0 bg-cover bg-center opacity-40"
-          style={{
-            backgroundImage:
-              "url('https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=2000')",
-          }}
-        />
-
-        <div className="absolute inset-0 bg-gradient-to-b from-[#080a09]/50 via-[#080a09]/65 to-[#080a09]" />
-
-        <motion.div
-          style={{ y: heroY, opacity: heroOpacity }}
-          className="relative z-10 max-w-5xl mx-auto"
-        >
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="inline-flex items-center gap-2 rounded-full border border-[#c6ff4d]/30 bg-[#c6ff4d]/10 px-5 py-2 text-xs tracking-[2px] uppercase text-[#c6ff4d] mb-10"
-          >
-            <Sparkles size={14} />
-            The future of personal health
-          </motion.div>
-
-          <motion.h1
-            initial={{ opacity: 0, y: 60 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, delay: 0.15 }}
-            className="text-[clamp(3rem,8vw,7rem)] leading-[0.92] font-semibold tracking-[-0.075em]"
-          >
-            YOUR BODY.
-            <br />
-            <span className="text-[#c6ff4d]">YOUR DATA.</span>
-            <br />
-            YOUR VYTA.
-          </motion.h1>
-
-          <motion.p
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, delay: 0.4 }}
-            className="max-w-2xl mx-auto mt-9 text-base md:text-xl text-white/65 leading-relaxed"
-          >
-            Understand what you eat. Discover what works.
-            Train with purpose. Meet the intelligent health
-            companion that brings your entire wellness journey together.
-          </motion.p>
-
-          <motion.div
-            initial={{ opacity: 0, y: 25 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, delay: 0.6 }}
-            className="flex flex-col sm:flex-row justify-center gap-4 mt-10"
-          >
-
-            <a
-              href="#register"
-              className="rounded-full bg-[#c6ff4d] text-black px-9 py-5 font-bold flex items-center justify-center gap-3 hover:scale-105 transition"
-            >
-              Join the waitlist
-              <ArrowRight size={18} />
-            </a>
-
-            <a
-              href="#intelligence"
-              className="rounded-full border border-white/25 px-9 py-5 text-white hover:bg-white/10 transition"
-            >
-              Discover VYTA
-            </a>
-
-          </motion.div>
-
+      {/* HERO — Wcrypt-inspired central statement and product interface mockup */}
+      <section id="home" className="relative flex min-h-[900px] flex-col items-center overflow-hidden px-5 pb-0 pt-36 text-center md:min-h-[1050px] md:pt-44">
+        <motion.div animate={{ opacity: [.55, .9, .55], scale: [1, 1.08, 1] }} transition={{ duration: 9, repeat: Infinity, ease: "easeInOut" }} className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_50%_68%,rgba(145,255,0,.17),transparent_38%),radial-gradient(ellipse_at_50%_0%,rgba(255,255,255,.035),transparent_45%)]"/>
+        <div className="pointer-events-none absolute -left-40 top-56 h-[500px] w-[500px] rounded-full border border-[#c6ff4d]/[.08]"/>
+        <div className="pointer-events-none absolute -right-40 top-56 h-[500px] w-[500px] rounded-full border border-[#c6ff4d]/[.08]"/>
+        <Reveal className="relative z-10">
+          <Eyebrow>One system. A healthier you.</Eyebrow>
+          <h1 className="mx-auto max-w-5xl text-balance text-5xl font-semibold leading-[.94] tracking-[-.075em] sm:text-7xl md:text-[104px]">Your health,<br/><span className="text-[#c6ff4d]">in a new light.</span></h1>
+          <p className="mx-auto mt-7 max-w-xl text-sm leading-7 text-white/45 md:text-base md:leading-8">Nutrition, movement, recovery and everyday habits. Connected by intelligence that helps you understand the whole picture.</p>
+          <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
+            <a href="#register" whileHover={{ scale: 1.045, boxShadow: "0 0 42px rgba(198,255,77,.24)" }} whileTap={{ scale: .97 }} className="group flex items-center gap-3 rounded-full bg-[#c6ff4d] py-1.5 pl-6 pr-1.5 text-sm font-bold text-black transition hover:scale-105">Get early access<span className="flex h-11 w-11 items-center justify-center rounded-full bg-black text-[#c6ff4d] transition group-hover:rotate-45"><ArrowUpRight size={19}/></span></a>
+            <a href="#product" className="flex items-center gap-2 rounded-full border border-white/15 px-6 py-4 text-sm text-white/75 transition hover:border-white/35 hover:bg-white/5">Explore VYTA <ArrowDownRight size={16}/></a>
+          </div>
+        </Reveal>
+        <motion.div initial={{opacity:0,y:90,scale:.94,rotateX:8}} whileInView={{opacity:1,y:0,scale:1,rotateX:0}} viewport={{once:true,amount:.1}} transition={{duration:1.25,ease:[.22,1,.36,1]}} whileHover={{y:-5}} className="relative z-10 mt-20 w-full max-w-[1120px]" style={{transformPerspective:1200}}>
+          <DashboardMockup/>
+          <div className="absolute -left-2 top-[30%] hidden -translate-x-1/2 lg:block"><GlassCard className="w-40 p-4 text-left"><Activity className="text-[#c6ff4d]" size={17}/><p className="mt-4 text-2xl font-semibold">+18.4%</p><p className="mt-1 text-[9px] uppercase tracking-widest text-white/35">Weekly activity</p></GlassCard></div>
+          <div className="absolute -right-3 bottom-[14%] hidden translate-x-1/2 lg:block"><GlassCard className="w-40 p-4 text-left"><Heart className="text-[#c6ff4d]" size={17}/><p className="mt-4 text-sm font-semibold">In balance</p><p className="mt-1 text-[9px] uppercase tracking-widest text-white/35">Recovery preview</p></GlassCard></div>
         </motion.div>
-
-        <div className="absolute bottom-8 left-0 right-0 flex justify-center">
-          <motion.div
-            animate={{ y: [0, 8, 0] }}
-            transition={{ repeat: Infinity, duration: 2 }}
-            className="text-white/50 flex flex-col items-center gap-2 text-xs uppercase tracking-widest"
-          >
-            Scroll to explore
-            <ArrowDown size={16} />
-          </motion.div>
-        </div>
-
+        <div className="relative z-10 mt-8 flex w-full max-w-[1120px] items-center justify-between border-t border-white/10 py-5 text-[8px] uppercase tracking-[.25em] text-white/25 md:text-[9px]"><span>01 / Understand</span><span className="hidden sm:block">A connected health companion</span><span>Scroll to explore ↓</span></div>
       </section>
 
-
-      {/* =====================================
-          02 — CINEMATIC STORY
-      ===================================== */}
-
-      <section
-        ref={storyRef}
-        id="intelligence"
-        className="relative h-[250vh] md:h-[220vh] bg-[#080a09]"
-      >
-
-        <div className="sticky top-[76px] h-[calc(100svh-76px)] overflow-hidden flex items-center justify-center px-5 md:px-10">
-
-          <motion.div
-            style={{ opacity: storyProgress }}
-            className="absolute w-[400px] md:w-[650px] h-[400px] md:h-[650px] rounded-full bg-[#c6ff4d]/[0.06] blur-[130px] pointer-events-none"
-          />
-
-          <div className="relative z-10 max-w-5xl w-full mx-auto text-center">
-
-            <motion.p
-              style={{ opacity: firstOpacity }}
-              className="text-[#c6ff4d] uppercase tracking-[3px] md:tracking-[5px] text-[10px] md:text-xs mb-7 md:mb-10"
-            >
-              A new perspective on health
-            </motion.p>
-
-            <motion.h2
-              style={{ opacity: firstOpacity, y: firstY }}
-              className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-semibold tracking-[-0.065em] leading-[1.05]"
-            >
-              You're doing the work.
-            </motion.h2>
-
-            <motion.h2
-              style={{ opacity: secondOpacity, y: secondY }}
-              className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-semibold tracking-[-0.065em] leading-[1.05] mt-3 text-[#c6ff4d]"
-            >
-              But are you understanding it?
-            </motion.h2>
-
-            <motion.p
-              style={{ opacity: descriptionOpacity }}
-              className="max-w-xl mx-auto mt-8 md:mt-12 text-sm sm:text-base md:text-xl text-white/50 leading-relaxed"
-            >
-              Calories in one app. Workouts in another.
-              Diet plans you forget. Progress you can't understand.
-            </motion.p>
-
-            <motion.div
-              style={{ opacity: closingOpacity }}
-              className="mt-10 md:mt-14"
-            >
-              <p className="text-xl md:text-4xl font-semibold tracking-tight">
-                Your health is connected.
-              </p>
-              <p className="text-xl md:text-4xl font-semibold tracking-tight text-[#c6ff4d] mt-2">
-                Your tools should be too.
-              </p>
-            </motion.div>
-
-            <motion.div
-              style={{ opacity: closingOpacity }}
-              className="flex justify-center mt-8"
-            >
-              <div className="w-10 h-10 md:w-12 md:h-12 rounded-full border border-[#c6ff4d]/40 flex items-center justify-center text-[#c6ff4d] font-bold">
-                V.
-              </div>
-            </motion.div>
-
+      {/* INTRO — Techware-style product/editorial feature cards */}
+      <section id="product" className="bg-[#f2f2ef] px-5 py-24 text-[#090a08] md:px-10 md:py-32">
+        <div className="mx-auto max-w-[1320px]">
+          <div className="flex flex-col justify-between gap-8 md:flex-row md:items-end">
+            <div className="max-w-2xl"><Eyebrow>Designed around real life</Eyebrow><h2 className="text-5xl font-semibold leading-[.98] tracking-[-.07em] md:text-7xl">A better way to<br/>care for <span className="text-[#86b900]">yourself.</span></h2></div>
+            <div className="max-w-md pb-1"><p className="text-sm leading-7 text-black/55 md:text-base">Not another tracker asking you to do more. A thoughtful system that helps make sense of the things you already do, every day.</p><a href="#ecosystem" className="mt-5 inline-flex items-center gap-2 text-sm font-semibold">Explore the VYTA system <ArrowUpRight size={16}/></a></div>
           </div>
-
-          <div className="absolute bottom-6 md:bottom-10 left-6 right-6 max-w-[680px] mx-auto">
-
-            <div className="h-[2px] bg-white/10 rounded-full overflow-hidden">
-              <motion.div
-                style={{
-                  scaleX: storyLineScale,
-                  transformOrigin: "left",
-                }}
-                className="h-full w-full bg-[#c6ff4d]"
-              />
-            </div>
-
-            <div className="flex justify-between mt-3 text-[8px] md:text-[10px] uppercase tracking-[2px] md:tracking-[4px] text-white/35">
-              <span>Understanding</span>
-              <span>VYTA Intelligence</span>
-            </div>
-
-          </div>
-
-        </div>
-      </section>
-
-
-      {/* =====================================
-          03 — FOOD INTELLIGENCE
-      ===================================== */}
-
-      <section
-        id="nutrition"
-        className="relative bg-[#101410] py-28 md:py-40 px-5 md:px-12"
-      >
-
-        <div className="max-w-[1400px] mx-auto">
-
-          <SectionHeading
-            number="01"
-            eyebrow="Food intelligence"
-            title="Your food has a story."
-            highlight="Know it."
-            description="Forget searching endless food databases. Capture your meal and let AI estimate its nutritional breakdown in seconds."
-          />
-
-          <div className="grid lg:grid-cols-2 gap-8 items-stretch">
-
-            <Reveal className="relative min-h-[440px] md:min-h-[650px] rounded-[30px] overflow-hidden border border-white/10 group">
-
-              <img
-                src="https://images.unsplash.com/photo-1547592180-85f173990554?w=1400"
-                alt="Nutritious meal"
-                className="absolute inset-0 w-full h-full object-cover transition-transform duration-[1500ms] group-hover:scale-105"
-              />
-
-              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/10 to-black/30" />
-
-              <motion.div
-                animate={{ top: ["10%", "90%", "10%"] }}
-                transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-                className="absolute left-0 right-0 h-[2px] bg-[#c6ff4d] shadow-[0_0_25px_#c6ff4d]"
-              />
-
-              <div className="absolute top-7 left-7 flex items-center gap-2 rounded-full bg-black/60 backdrop-blur-xl border border-white/20 px-4 py-3">
-                <span className="w-2 h-2 rounded-full bg-[#c6ff4d] animate-pulse" />
-                <span className="text-xs uppercase tracking-widest">
-                  AI food recognition
-                </span>
-              </div>
-
-              <div className="absolute bottom-8 left-7 right-7">
-                <p className="text-[#c6ff4d] text-xs uppercase tracking-[3px] mb-3">
-                  Capture. Understand. Improve.
-                </p>
-                <h3 className="text-3xl md:text-5xl font-semibold">
-                  Every meal matters.
-                </h3>
-              </div>
-
-            </Reveal>
-
-
-            <Reveal delay={0.15} className="rounded-[30px] border border-white/10 bg-[#080a09] p-6 md:p-10 flex flex-col justify-between">
-
-              <div>
-
-                <div className="flex justify-between items-center">
-                  <div>
-                    <p className="text-white/40 text-xs tracking-[3px] uppercase">
-                      AI nutrition report
-                    </p>
-                    <h3 className="text-2xl font-semibold mt-3">
-                      Meal breakdown
-                    </h3>
-                  </div>
-                  <Sparkles className="text-[#c6ff4d]" size={28} />
-                </div>
-
-                <div className="mt-12 p-6 rounded-2xl bg-[#c6ff4d] text-black">
-                  <div className="flex justify-between">
-                    <p className="text-sm font-medium opacity-70">
-                      Estimated energy
-                    </p>
-                    <Flame size={22} />
-                  </div>
-                  <div className="flex items-end gap-3 mt-3">
-                    <span className="text-6xl md:text-7xl font-bold">
-                      640
-                    </span>
-                    <span className="text-lg mb-2">KCAL</span>
-                  </div>
-                  <p className="text-xs opacity-60 mt-2">
-                    Illustrative meal estimate
-                  </p>
-                </div>
-
-                <div className="mt-10">
-                  <p className="text-white/40 text-xs tracking-[3px] uppercase mb-6">
-                    Macronutrients
-                  </p>
-
-                  {[
-                    { name: "Protein", value: "28g", width: "70%" },
-                    { name: "Carbohydrates", value: "72g", width: "85%" },
-                    { name: "Healthy fats", value: "22g", width: "45%" },
-                  ].map((item, index) => (
-                    <div key={item.name} className="mb-7">
-                      <div className="flex justify-between mb-3 text-sm">
-                        <span className="text-white/70">{item.name}</span>
-                        <span className="font-semibold">{item.value}</span>
-                      </div>
-                      <div className="h-[6px] rounded-full bg-white/10 overflow-hidden">
-                        <motion.div
-                          initial={{ width: 0 }}
-                          whileInView={{ width: item.width }}
-                          viewport={{ once: true }}
-                          transition={{ duration: 1.2, delay: index * 0.2 }}
-                          className="h-full rounded-full bg-[#c6ff4d]"
-                        />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-              </div>
-
-              <div className="mt-8 pt-7 border-t border-white/10 flex items-center justify-between">
-                <span className="text-sm text-white/60">
-                  Smarter nutrition tracking
-                </span>
-                <Check className="text-[#c6ff4d]" size={20} />
-              </div>
-
-            </Reveal>
-
-          </div>
-
-          <p className="text-center text-white/30 text-xs mt-8">
-            Nutrition values shown are illustrative estimates.
-          </p>
-
-        </div>
-      </section>
-
-
-      {/* =====================================
-          04 — PERSONALIZED NUTRITION
-      ===================================== */}
-
-      <section
-        id="diet"
-        className="relative bg-[#080a09] py-28 md:py-40 px-5 md:px-12"
-      >
-
-        <div className="absolute top-40 right-0 w-[450px] h-[450px] rounded-full bg-[#c6ff4d]/[0.035] blur-[150px] pointer-events-none" />
-
-        <div className="relative max-w-[1400px] mx-auto">
-
-          <SectionHeading
-            number="02"
-            eyebrow="Personalized nutrition"
-            title="Not another generic diet."
-            highlight="Your diet."
-            description="Your body, your goals, your food preferences. VYTA brings them together to create a nutrition plan that fits your everyday life."
-          />
-
-          <div className="grid lg:grid-cols-[0.8fr_1.2fr] gap-8 items-start">
-
-            {/* PERSONALIZATION */}
-
-            <Reveal className="rounded-[28px] border border-white/10 bg-[#101410] p-7 md:p-9">
-
-              <p className="text-white/40 text-xs uppercase tracking-[3px]">
-                Your profile
-              </p>
-              <h3 className="text-2xl font-semibold mt-3">
-                Make it yours.
-              </h3>
-
-              <div className="mt-10">
-                <p className="text-white/40 text-xs uppercase tracking-[2px] mb-4">
-                  Nutrition preference
-                </p>
-
-                <div className="grid gap-3">
-
-                  {[
-                    { name: "Vegetarian", icon: Leaf, desc: "Plant-based with dairy" },
-                    { name: "Vegan", icon: Salad, desc: "Entirely plant-based" },
-                    { name: "Non-Vegetarian", icon: Utensils, desc: "Includes meat and fish" },
-                  ].map((option) => {
-                    const Icon = option.icon;
-                    const selected = dietPreference === option.name;
-
-                    return (
-                      <button
-                        key={option.name}
-                        onClick={() => setDietPreference(option.name)}
-                        className={`flex items-center gap-4 p-4 rounded-xl border text-left transition-all ${
-                          selected
-                            ? "border-[#c6ff4d] bg-[#c6ff4d]/[0.08]"
-                            : "border-white/10 bg-white/[0.02] hover:border-white/30"
-                        }`}
-                      >
-                        <div className={`w-11 h-11 rounded-full flex items-center justify-center ${
-                          selected ? "bg-[#c6ff4d] text-black" : "bg-white/5 text-white/50"
-                        }`}>
-                          <Icon size={20} />
-                        </div>
-                        <div className="flex-1">
-                          <p className="font-semibold text-sm">{option.name}</p>
-                          <p className="text-white/40 text-xs mt-1">{option.desc}</p>
-                        </div>
-                        {selected && <Check size={19} className="text-[#c6ff4d]" />}
-                      </button>
-                    );
-                  })}
-
-                </div>
-              </div>
-
-              <div className="mt-9 p-5 rounded-2xl bg-[#080a09] border border-white/10">
-                <p className="text-white/40 text-xs uppercase tracking-[2px]">
-                  Sample daily target
-                </p>
-                <p className="text-4xl font-bold mt-5">
-                  {currentDiet.calories}
-                </p>
-                <p className="text-white/40 text-xs mt-1">
-                  Calories / day
-                </p>
-              </div>
-
-            </Reveal>
-
-
-            {/* MEAL PLAN */}
-
-            <Reveal delay={0.15} className="rounded-[28px] border border-white/10 bg-[#101410] p-6 md:p-9">
-
-              <div className="flex flex-wrap justify-between items-center gap-4">
-                <div>
-                  <p className="text-white/40 text-xs uppercase tracking-[3px]">
-                    Your daily nutrition
-                  </p>
-                  <h3 className="text-2xl md:text-3xl font-semibold mt-3">
-                    The daily plan.
-                  </h3>
-                </div>
-
-                <span className="rounded-full border border-[#c6ff4d]/30 bg-[#c6ff4d]/10 text-[#c6ff4d] px-4 py-2 text-xs">
-                  {dietPreference}
-                </span>
-              </div>
-
-              <div className="grid grid-cols-3 gap-3 mt-9">
-                {[
-                  { label: "Protein", value: currentDiet.protein },
-                  { label: "Carbs", value: currentDiet.carbs },
-                  { label: "Fats", value: currentDiet.fats },
-                ].map((macro) => (
-                  <div key={macro.label} className="bg-[#080a09] rounded-xl p-4 border border-white/5">
-                    <p className="text-white/40 text-[10px] uppercase">
-                      {macro.label}
-                    </p>
-                    <p className="text-xl md:text-2xl font-bold mt-2">
-                      {macro.value}
-                    </p>
-                  </div>
-                ))}
-              </div>
-
-              <div className="mt-10">
-                <div className="flex justify-between mb-6">
-                  <p className="text-white/40 text-xs uppercase tracking-[3px]">
-                    Your meals
-                  </p>
-                  <span className="text-white/30 text-xs">4 meals</span>
-                </div>
-
-                <div className="space-y-4">
-                  {currentDiet.meals.map((meal, index) => (
-                    <motion.div
-                      key={`${dietPreference}-${meal.name}`}
-                      initial={{ opacity: 0, y: 15 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.35, delay: index * 0.08 }}
-                      className="flex items-center gap-4 p-3 rounded-2xl bg-[#080a09] border border-white/5 hover:border-[#c6ff4d]/30 transition"
-                    >
-                      <img
-                        src={meal.image}
-                        alt={meal.name}
-                        className="w-[76px] h-[76px] shrink-0 rounded-xl object-cover"
-                      />
-                      <div className="flex-1 min-w-0">
-                        <p className="text-[#c6ff4d] text-[10px] uppercase tracking-[2px]">
-                          {meal.time}
-                        </p>
-                        <h4 className="font-semibold text-sm md:text-base mt-1">
-                          {meal.name}
-                        </h4>
-                        <p className="text-white/40 text-xs mt-1">
-                          {meal.description}
-                        </p>
-                      </div>
-                      <div className="text-right shrink-0">
-                        <p className="text-xs md:text-sm font-semibold">
-                          {meal.calories}
-                        </p>
-                        <ChevronRight size={16} className="text-white/30 ml-auto mt-2" />
-                      </div>
-                    </motion.div>
-                  ))}
-                </div>
-              </div>
-
-              <div className="mt-8 pt-7 border-t border-white/10 flex justify-between text-xs text-white/40">
-                <span>Example daily schedule</span>
-                <span className="text-[#c6ff4d]">Personalized concept</span>
-              </div>
-
-            </Reveal>
-
-          </div>
-
-          <Reveal className="mt-28 text-center">
-            <h3 className="text-3xl md:text-6xl font-semibold tracking-[-0.06em]">
-              Healthy eating.
-              <br />
-              <span className="text-[#c6ff4d]">
-                Without the guesswork.
-              </span>
-            </h3>
-          </Reveal>
-
-        </div>
-      </section>
-
-
-      {/* =====================================
-          05 — FITNESS INTELLIGENCE
-      ===================================== */}
-
-      <section
-        id="fitness"
-        className="bg-[#101410] py-28 md:py-40 px-5 md:px-12"
-      >
-
-        <div className="max-w-[1400px] mx-auto">
-
-          <SectionHeading
-            number="03"
-            eyebrow="Fitness intelligence"
-            title="Train smarter."
-            highlight="Not just harder."
-            description="Workouts built around your goals, your fitness level and your available equipment. Every session has a purpose."
-          />
-
-          <div className="grid md:grid-cols-3 gap-5">
-
-            {[
-              {
-                name: "Strength training",
-                subtitle: "Build strength and muscle",
-                image: "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?w=900",
-                tag: "BUILD",
-                icon: Dumbbell,
-              },
-              {
-                name: "Cardio & endurance",
-                subtitle: "Improve stamina and fitness",
-                image: "https://images.unsplash.com/photo-1538805060514-97d9cc17730c?w=900",
-                tag: "PERFORM",
-                icon: Activity,
-              },
-              {
-                name: "Mobility & recovery",
-                subtitle: "Move better and recover",
-                image: "https://images.unsplash.com/photo-1518611012118-696072aa579a?w=900",
-                tag: "RECOVER",
-                icon: Heart,
-              },
-            ].map((workout, index) => {
-              const Icon = workout.icon;
-
-              return (
-                <Reveal key={workout.name} delay={index * 0.1}>
-                  <div className="relative h-[450px] md:h-[560px] rounded-[26px] overflow-hidden group border border-white/10">
-
-                    <img
-                      src={workout.image}
-                      alt={workout.name}
-                      className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition duration-1000"
-                    />
-
-                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
-
-                    <div className="absolute top-6 left-6">
-                      <span className="bg-[#c6ff4d] text-black px-4 py-2 rounded-full text-[10px] font-bold tracking-widest">
-                        {workout.tag}
-                      </span>
-                    </div>
-
-                    <div className="absolute bottom-8 left-7 right-7">
-                      <Icon className="text-[#c6ff4d] mb-5" size={28} />
-                      <h3 className="text-2xl md:text-3xl font-semibold">
-                        {workout.name}
-                      </h3>
-                      <p className="text-white/55 mt-2 text-sm">
-                        {workout.subtitle}
-                      </p>
-                    </div>
-
-                  </div>
-                </Reveal>
-              );
-            })}
-
-          </div>
-
-
-          {/* WORKOUT PREVIEW */}
-
-          <Reveal className="mt-12 rounded-[28px] border border-white/10 bg-[#080a09] p-7 md:p-12">
-
-            <div className="grid md:grid-cols-2 gap-10 items-center">
-
-              <div>
-                <p className="text-[#c6ff4d] text-xs tracking-[3px] uppercase">
-                  Your workout preview
-                </p>
-
-                <h3 className="text-3xl md:text-5xl font-semibold mt-5 tracking-tight">
-                  A session with purpose.
-                </h3>
-
-                <p className="text-white/45 mt-5 leading-relaxed">
-                  Follow structured sessions, understand every exercise
-                  and track your training consistency.
-                </p>
-
-                <div className="flex gap-6 mt-8">
-                  <div>
-                    <p className="text-3xl font-bold">45</p>
-                    <p className="text-white/40 text-xs mt-1">Minutes</p>
-                  </div>
-                  <div>
-                    <p className="text-3xl font-bold">5</p>
-                    <p className="text-white/40 text-xs mt-1">Exercises</p>
-                  </div>
-                  <div>
-                    <p className="text-3xl font-bold">3</p>
-                    <p className="text-white/40 text-xs mt-1">Sets each</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="space-y-3">
-                {[
-                  ["Barbell squat", "3 sets × 10 reps"],
-                  ["Bench press", "3 sets × 10 reps"],
-                  ["Lat pulldown", "3 sets × 12 reps"],
-                  ["Shoulder press", "3 sets × 12 reps"],
-                  ["Plank", "3 sets × 45 sec"],
-                ].map(([name, details], index) => (
-                  <div key={name} className="flex items-center gap-4 p-4 rounded-xl bg-[#101410] border border-white/5">
-                    <span className="text-[#c6ff4d] text-sm font-bold">
-                      0{index + 1}
-                    </span>
-                    <div className="flex-1">
-                      <p className="font-semibold text-sm">{name}</p>
-                      <p className="text-white/40 text-xs mt-1">{details}</p>
-                    </div>
-                    <Check size={17} className="text-white/30" />
-                  </div>
-                ))}
-              </div>
-
-            </div>
-
-          </Reveal>
-
-        </div>
-      </section>
-
-
-      {/* =====================================
-          06 — HEALTH DASHBOARD
-      ===================================== */}
-
-      <section
-        id="dashboard"
-        className="bg-[#080a09] py-28 md:py-40 px-5 md:px-12"
-      >
-
-        <div className="max-w-[1400px] mx-auto">
-
-          <SectionHeading
-            number="04"
-            eyebrow="Your health dashboard"
-            title="See the bigger picture."
-            highlight="Every day."
-            description="Your health is more than one number. Understand your activity, nutrition, body trends, sleep and consistency in one place."
-          />
-
-          <Reveal className="rounded-[30px] border border-white/10 bg-[#101410] p-5 md:p-10">
-
-            <div className="flex flex-wrap items-center justify-between gap-4 mb-10">
-              <div>
-                <p className="text-white/40 text-xs uppercase tracking-[3px]">
-                  VYTA overview
-                </p>
-                <h3 className="text-2xl md:text-3xl font-semibold mt-2">
-                  Your daily snapshot
-                </h3>
-              </div>
-
-              <span className="text-xs border border-[#c6ff4d]/30 rounded-full px-4 py-2 text-[#c6ff4d]">
-                Sample dashboard
-              </span>
-            </div>
-
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-
-              {[
-                { label: "Calories consumed", value: "1,640", unit: "kcal", icon: Flame, progress: "82%" },
-                { label: "Protein intake", value: "92", unit: "grams", icon: Apple, progress: "77%" },
-                { label: "Daily steps", value: "8,420", unit: "steps", icon: Footprints, progress: "84%" },
-                { label: "Workout", value: "45", unit: "minutes", icon: Dumbbell, progress: "75%" },
-              ].map((metric) => {
-                const Icon = metric.icon;
-
-                return (
-                  <div key={metric.label} className="bg-[#080a09] border border-white/5 rounded-2xl p-6">
-                    <div className="flex justify-between">
-                      <Icon className="text-[#c6ff4d]" size={22} />
-                      <TrendingUp className="text-white/20" size={18} />
-                    </div>
-                    <p className="text-white/40 text-xs mt-7">
-                      {metric.label}
-                    </p>
-                    <p className="text-3xl font-bold mt-2">
-                      {metric.value}
-                    </p>
-                    <p className="text-white/30 text-xs mt-1">
-                      {metric.unit}
-                    </p>
-                    <div className="h-1.5 rounded-full bg-white/10 mt-5 overflow-hidden">
-                      <div
-                        className="h-full rounded-full bg-[#c6ff4d]"
-                        style={{ width: metric.progress }}
-                      />
-                    </div>
-                  </div>
-                );
-              })}
-
-            </div>
-
-
-            {/* PROGRESS GRAPH */}
-
-            <div className="grid lg:grid-cols-[1.3fr_0.7fr] gap-6 mt-6">
-
-              <div className="rounded-2xl bg-[#080a09] border border-white/5 p-6 md:p-8">
-
-                <div className="flex justify-between items-center">
-                  <div>
-                    <p className="text-white/40 text-xs uppercase tracking-[2px]">
-                      Activity overview
-                    </p>
-                    <h4 className="text-xl font-semibold mt-2">
-                      Weekly consistency
-                    </h4>
-                  </div>
-                  <Activity className="text-[#c6ff4d]" />
-                </div>
-
-                <div className="flex items-end justify-between gap-3 h-48 mt-10">
-                  {[
-                    ["M", 45],
-                    ["T", 70],
-                    ["W", 55],
-                    ["T", 85],
-                    ["F", 65],
-                    ["S", 95],
-                    ["S", 60],
-                  ].map(([day, value], index) => (
-                    <div key={index} className="flex-1 flex flex-col items-center gap-3 h-full justify-end">
-                      <div
-                        className="w-full max-w-[48px] rounded-t-lg bg-[#c6ff4d]"
-                        style={{ height: `${value}%`, opacity: 0.35 + index * 0.08 }}
-                      />
-                      <span className="text-white/35 text-xs">{day}</span>
-                    </div>
-                  ))}
-                </div>
-
-              </div>
-
-
-              <div className="rounded-2xl bg-[#c6ff4d] text-black p-6 md:p-8 flex flex-col justify-between">
-
-                <div>
-                  <Sparkles size={27} />
-                  <p className="text-xs uppercase tracking-[2px] mt-7 opacity-60">
-                    Your weekly insight
-                  </p>
-                </div>
-
-                <div>
-                  <h4 className="text-3xl md:text-4xl font-bold tracking-tight">
-                    Progress is built through consistency.
-                  </h4>
-                  <p className="text-sm opacity-65 mt-5">
-                    Understand your patterns and celebrate
-                    the habits you maintain.
-                  </p>
-                </div>
-
-              </div>
-
-            </div>
-
-          </Reveal>
-
-        </div>
-      </section>
-
-
-      {/* =====================================
-          07 — VYTA AI
-      ===================================== */}
-
-      <section
-        id="ai"
-        className="relative bg-[#101410] py-28 md:py-40 px-5 md:px-12 overflow-hidden"
-      >
-
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#c6ff4d]/[0.06] blur-[160px] rounded-full pointer-events-none" />
-
-        <div className="relative max-w-[1400px] mx-auto">
-
-          <SectionHeading
-            number="05"
-            eyebrow="VYTA intelligence"
-            title="Your health has a"
-            highlight="thinking partner."
-            description="An intelligent companion designed to understand the relationship between what you eat, how you move and how you progress."
-          />
-
-          <div className="grid lg:grid-cols-2 gap-10 items-center">
-
-            {/* AI VISUAL */}
-
-            <Reveal className="relative min-h-[450px] md:min-h-[590px] rounded-[30px] border border-white/10 bg-[#080a09] overflow-hidden flex items-center justify-center">
-
-              <div className="absolute w-[280px] h-[280px] md:w-[400px] md:h-[400px] border border-[#c6ff4d]/10 rounded-full" />
-              <div className="absolute w-[210px] h-[210px] md:w-[310px] md:h-[310px] border border-[#c6ff4d]/20 rounded-full" />
-              <div className="absolute w-[140px] h-[140px] md:w-[220px] md:h-[220px] border border-[#c6ff4d]/30 rounded-full" />
-
-              <motion.div
-                animate={{ rotate: 360 }}
-                transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
-                className="absolute w-[330px] h-[330px] md:w-[500px] md:h-[500px] rounded-full border border-dashed border-[#c6ff4d]/30"
-              />
-
-              <motion.div
-                animate={{ scale: [1, 1.08, 1], opacity: [0.7, 1, 0.7] }}
-                transition={{ duration: 3, repeat: Infinity }}
-                className="relative z-10 w-28 h-28 md:w-40 md:h-40 rounded-full bg-[#c6ff4d] text-black flex items-center justify-center shadow-[0_0_100px_rgba(198,255,77,0.25)]"
-              >
-                <Brain size={55} />
-              </motion.div>
-
-              {[
-                { icon: Apple, x: "12%", y: "20%" },
-                { icon: Dumbbell, x: "78%", y: "25%" },
-                { icon: Heart, x: "15%", y: "75%" },
-                { icon: Activity, x: "80%", y: "75%" },
-              ].map((item, index) => {
-                const Icon = item.icon;
-
-                return (
-                  <motion.div
-                    key={index}
-                    animate={{ y: [0, -10, 0] }}
-                    transition={{ duration: 4, repeat: Infinity, delay: index * 0.5 }}
-                    style={{ left: item.x, top: item.y }}
-                    className="absolute w-12 h-12 md:w-16 md:h-16 rounded-2xl border border-[#c6ff4d]/30 bg-[#c6ff4d]/10 backdrop-blur-lg flex items-center justify-center text-[#c6ff4d]"
-                  >
-                    <Icon size={25} />
-                  </motion.div>
-                );
-              })}
-
-              <div className="absolute bottom-7 text-center">
-                <p className="text-[#c6ff4d] text-xs tracking-[4px] uppercase">
-                  VYTA AI
-                </p>
-                <p className="text-white/40 text-xs mt-2">
-                  One connected intelligence
-                </p>
-              </div>
-
-            </Reveal>
-
-
-            {/* AI CAPABILITIES */}
-
+          <div className="mt-14 grid gap-5 md:grid-cols-2">
             <div className="space-y-5">
-
-              {[
-                {
-                  icon: Camera,
-                  title: "Understand your meals",
-                  desc: "Explore nutrition estimates and understand your daily food choices.",
-                },
-                {
-                  icon: Dumbbell,
-                  title: "Guide your workouts",
-                  desc: "Explore training recommendations based on your goals and activity.",
-                },
-                {
-                  icon: TrendingUp,
-                  title: "Understand your progress",
-                  desc: "Connect your habits and progress to identify meaningful patterns.",
-                },
-                {
-                  icon: Heart,
-                  title: "Support your wellness",
-                  desc: "Bring sleep, recovery, hydration and activity into one picture.",
-                },
-              ].map((feature, index) => {
-                const Icon = feature.icon;
-
-                return (
-                  <Reveal key={feature.title} delay={index * 0.1}>
-                    <div className="flex gap-5 p-6 rounded-2xl border border-white/10 bg-[#080a09] hover:border-[#c6ff4d]/40 transition">
-                      <div className="w-12 h-12 shrink-0 rounded-xl bg-[#c6ff4d]/10 text-[#c6ff4d] flex items-center justify-center">
-                        <Icon size={23} />
-                      </div>
-                      <div>
-                        <h3 className="text-lg font-semibold">
-                          {feature.title}
-                        </h3>
-                        <p className="text-white/40 text-sm mt-2 leading-relaxed">
-                          {feature.desc}
-                        </p>
-                      </div>
-                    </div>
-                  </Reveal>
-                );
-              })}
-
-            </div>
-
-          </div>
-
-          <p className="text-center text-white/30 text-xs mt-10">
-            AI capabilities shown are planned product experiences, not live services.
-          </p>
-
-        </div>
-      </section>
-
-
-      {/* =====================================
-          08 — VYTA STORE
-      ===================================== */}
-
-      <section
-        id="store"
-        className="bg-[#080a09] py-28 md:py-40 px-5 md:px-12"
-      >
-
-        <div className="max-w-[1400px] mx-auto">
-
-          <SectionHeading
-            number="06"
-            eyebrow="VYTA marketplace"
-            title="Everything your"
-            highlight="journey needs."
-            description="A curated wellness marketplace connecting your health goals with relevant products, equipment and everyday essentials."
-          />
-
-          <div className="grid md:grid-cols-3 gap-5">
-
-            {[
-              {
-                name: "Fitness essentials",
-                desc: "Training equipment and accessories",
-                image: "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=900",
-                label: "TRAIN BETTER",
-              },
-              {
-                name: "Nutrition essentials",
-                desc: "Meal preparation and nutrition products",
-                image: "https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=900",
-                label: "EAT SMARTER",
-              },
-              {
-                name: "Recovery essentials",
-                desc: "Recovery, mobility and wellness products",
-                image: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=900",
-                label: "RECOVER BETTER",
-              },
-            ].map((product, index) => (
-              <Reveal key={product.name} delay={index * 0.1}>
-                <div className="relative h-[390px] md:h-[490px] rounded-[25px] overflow-hidden group border border-white/10">
-                  <img
-                    src={product.image}
-                    alt={product.name}
-                    className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition duration-1000"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/10 to-transparent" />
-
-                  <div className="absolute top-6 left-6">
-                    <span className="text-[#c6ff4d] text-[10px] tracking-[3px] font-bold">
-                      {product.label}
-                    </span>
-                  </div>
-
-                  <div className="absolute bottom-7 left-7 right-7">
-                    <h3 className="text-2xl md:text-3xl font-semibold">
-                      {product.name}
-                    </h3>
-                    <p className="text-white/55 text-sm mt-2">
-                      {product.desc}
-                    </p>
-                    <div className="flex items-center gap-2 mt-5 text-[#c6ff4d] text-sm">
-                      Explore category <ArrowRight size={16} />
-                    </div>
-                  </div>
-                </div>
+              <Reveal className="group overflow-hidden rounded-[26px] bg-[#e5e5e1]">
+                <div className="relative h-[310px] overflow-hidden md:h-[390px]"><img src="https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=1600&q=90" alt="Fresh balanced meal" className="h-full w-full object-cover transition duration-700 group-hover:scale-105"/><div className="absolute inset-0 bg-gradient-to-t from-black/35 to-transparent"/></div>
+                <div className="p-6 md:p-8"><div className="text-[9px] uppercase tracking-[.22em] text-black/40">01 / Nutrition</div><h3 className="mt-3 text-3xl font-semibold tracking-[-.05em] md:text-4xl">Eat with insight.</h3><p className="mt-3 max-w-lg text-sm leading-6 text-black/55">Turn meals into useful information, without losing the joy of eating.</p></div>
               </Reveal>
-            ))}
-
-          </div>
-
-
-          {/* CROSS SELLING CONCEPT */}
-
-          <Reveal className="mt-12 rounded-[28px] bg-[#c6ff4d] text-black p-8 md:p-14">
-
-            <div className="grid md:grid-cols-2 gap-8 items-center">
-
-              <div>
-                <p className="text-black/50 text-xs tracking-[3px] uppercase">
-                  Shopping that makes sense
-                </p>
-                <h3 className="text-3xl md:text-5xl font-bold tracking-tight mt-5">
-                  Products that fit your goals.
-                </h3>
-                <p className="text-black/65 mt-5 leading-relaxed">
-                  Discover relevant products based on your interests,
-                  fitness journey and wellness preferences.
-                </p>
-              </div>
-
-              <div className="space-y-3">
-
-                {[
-                  ["Strength training", "Training equipment"],
-                  ["Nutrition tracking", "Meal preparation tools"],
-                  ["Recovery routine", "Mobility accessories"],
-                ].map(([goalName, recommendation]) => (
-                  <div key={goalName} className="flex justify-between items-center gap-3 bg-black/5 rounded-xl p-5">
-                    <div>
-                      <p className="font-bold text-sm">{goalName}</p>
-                      <p className="text-black/55 text-xs mt-1">
-                        {recommendation}
-                      </p>
-                    </div>
-                    <ArrowRight size={19} />
-                  </div>
-                ))}
-
-              </div>
-
+              <Reveal delay={.12} className="group overflow-hidden rounded-[26px] bg-[#e5e5e1]">
+                <div className="relative h-[280px] overflow-hidden md:h-[340px]"><img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1600&q=90" alt="Athlete training in gym" className="h-full w-full object-cover transition duration-700 group-hover:scale-105"/><div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"/></div>
+                <div className="p-6 md:p-8"><div className="text-[9px] uppercase tracking-[.22em] text-black/40">02 / Movement</div><h3 className="mt-3 text-3xl font-semibold tracking-[-.05em] md:text-4xl">Train with purpose.</h3><p className="mt-3 max-w-lg text-sm leading-6 text-black/55">Build routines that meet you where you are and grow with you.</p></div>
+              </Reveal>
             </div>
-
-          </Reveal>
-
+            <Reveal delay={.1} className="group overflow-hidden rounded-[26px] bg-[#e5e5e1]">
+              <div className="relative h-[540px] overflow-hidden md:h-[770px]"><img src="https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=1800&q=90" alt="Mindful recovery and stretching" className="h-full w-full object-cover transition duration-700 group-hover:scale-105"/><div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent"/></div>
+              <div className="p-6 md:p-8"><div className="text-[9px] uppercase tracking-[.22em] text-black/40">03 / Recovery</div><h3 className="mt-3 text-3xl font-semibold tracking-[-.05em] md:text-4xl">Recover smarter.</h3><p className="mt-3 max-w-lg text-sm leading-6 text-black/55">Make rest, sleep and daily habits part of your progress story.</p></div>
+            </Reveal>
+          </div>
         </div>
       </section>
 
+      {/* THREE FEATURE CARDS — Wcrypt-style */}
+      <section className="px-5 py-24 md:px-10 md:py-32">
+        <div className="mx-auto max-w-[1280px]">
+          <SectionTitle eyebrow="The VYTA difference" title="A connected system." accent="A clearer you." description="The things that shape your health are connected. Your tools should be, too." center/>
+          <div className="mt-16 grid gap-4 md:grid-cols-3">
+            {features.map((f,i)=>{const Icon=f.icon;return <Reveal key={f.n} delay={i*.1} className="group rounded-[26px] border border-white/10 bg-[#111310] p-6 transition duration-500 hover:-translate-y-2 hover:border-[#c6ff4d]/35 md:p-8"><div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#c6ff4d] text-black"><Icon size={22}/></div><div className="mt-12 text-[9px] tracking-[.2em] text-[#c6ff4d]">{f.n} / {f.tag}</div><h3 className="mt-3 text-2xl font-semibold tracking-[-.04em]">{f.title}</h3><p className="mt-4 text-sm leading-7 text-white/42">{f.desc}</p><div className="mt-8 flex items-center justify-between border-t border-white/10 pt-5 text-[10px] uppercase tracking-[.18em] text-white/30"><span>Explore feature</span><ArrowUpRight size={16} className="text-[#c6ff4d] transition group-hover:-translate-y-1 group-hover:translate-x-1"/></div></Reveal>})}
+          </div>
+        </div>
+      </section>
 
-      {/* =====================================
-          09 — CONNECTED ECOSYSTEM
-      ===================================== */}
-
-      <section
-        id="ecosystem"
-        className="bg-[#101410] py-28 md:py-40 px-5 md:px-12"
-      >
-
-        <div className="max-w-[1200px] mx-auto text-center">
-
+      {/* NUTRITION — editorial section + interactive diet toggle */}
+      <section id="nutrition" className="bg-[#f2f2ef] px-5 py-24 text-[#080908] md:px-10 md:py-32">
+        <div className="mx-auto grid max-w-[1320px] items-center gap-12 lg:grid-cols-[.9fr_1.1fr]">
           <Reveal>
-            <p className="text-[#c6ff4d] text-xs tracking-[4px] uppercase mb-8">
-              07 / One connected ecosystem
-            </p>
-
-            <h2 className="text-5xl md:text-8xl font-semibold tracking-[-0.08em] leading-[1.02]">
-              Everything
-              <br />
-              <span className="text-[#c6ff4d]">works together.</span>
-            </h2>
-
-            <p className="max-w-2xl mx-auto text-white/45 text-base md:text-xl mt-8 leading-relaxed">
-              Food, fitness, recovery, insights and products.
-              One connected approach to your health.
-            </p>
+            <Eyebrow>01 / Food intelligence</Eyebrow>
+            <h2 className="text-5xl font-semibold leading-[.94] tracking-[-.07em] md:text-7xl">Know what<br/>fuels <span className="text-[#86b900]">you.</span></h2>
+            <p className="mt-7 max-w-md text-sm leading-7 text-black/55 md:text-base">A meal is more than a calorie count. VYTA is designed to help you understand ingredients, portions and nutritional patterns over time.</p>
+            <div className="mt-8 flex flex-wrap gap-2">{["Vegetarian","Vegan","Non-vegetarian"].map(d=><button key={d} onClick={()=>setDiet(d)} className={`rounded-full border px-4 py-2.5 text-xs transition ${diet===d?"border-black bg-black text-white":"border-black/15 text-black/60 hover:border-black/40"}`}>{d}</button>)}</div>
+            <div className="mt-8 grid max-w-md grid-cols-3 gap-3">{[["2,000","Daily kcal*"],["120g","Protein*"],["4","Meal ideas*"]].map(([v,l])=><div key={l} className="rounded-2xl bg-white p-4"><div className="text-2xl font-semibold tracking-tight">{v}</div><div className="mt-1 text-[9px] uppercase tracking-widest text-black/40">{l}</div></div>)}</div>
+            <p className="mt-4 text-[10px] text-black/35">*Illustrative preview values. Not a personal nutrition prescription.</p>
           </Reveal>
-
-
-          {/* ECOSYSTEM DIAGRAM */}
-
-          <Reveal className="mt-20 relative">
-
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
-
-              {[
-                { name: "Nutrition", icon: Apple, desc: "What you eat" },
-                { name: "Fitness", icon: Dumbbell, desc: "How you train" },
-                { name: "Recovery", icon: Moon, desc: "How you recover" },
-                { name: "Tracking", icon: Activity, desc: "How you progress" },
-                { name: "AI insights", icon: Brain, desc: "What you understand" },
-                { name: "Marketplace", icon: ShoppingBag, desc: "What supports you" },
-              ].map((item, index) => {
-                const Icon = item.icon;
-
-                return (
-                  <motion.div
-                    key={item.name}
-                    whileHover={{ y: -6 }}
-                    className="rounded-2xl border border-white/10 bg-[#080a09] p-6 md:p-9 text-left hover:border-[#c6ff4d]/50 transition"
-                  >
-                    <div className="w-12 h-12 rounded-xl bg-[#c6ff4d]/10 flex items-center justify-center text-[#c6ff4d]">
-                      <Icon size={24} />
-                    </div>
-                    <h3 className="text-lg md:text-xl font-semibold mt-7">
-                      {item.name}
-                    </h3>
-                    <p className="text-white/40 text-xs mt-2">
-                      {item.desc}
-                    </p>
-                    <p className="text-white/15 text-xs mt-6">
-                      0{index + 1}
-                    </p>
-                  </motion.div>
-                );
-              })}
-
+          <Reveal delay={.12} className="relative overflow-hidden rounded-[30px] bg-[#dfe0d9] p-3 md:p-5">
+            <div className="relative h-[280px] overflow-hidden rounded-[22px] md:h-[390px]"><img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=1800&q=90" alt="Healthy food bowl" className="h-full w-full object-cover"/><div className="absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-transparent"/><div className="absolute bottom-5 left-5 text-white"><div className="text-[9px] uppercase tracking-[.2em] text-white/65">Your plate, decoded</div><div className="mt-2 text-3xl font-semibold tracking-tight">Food, understood.</div></div></div>
+            <div className="mt-3 grid grid-cols-2 gap-3">
+              <div className="rounded-2xl bg-white p-4"><div className="text-[9px] uppercase tracking-widest text-black/40">Meal estimate</div><div className="mt-2 text-3xl font-semibold">640 <span className="text-xs font-normal text-black/45">kcal</span></div><div className="mt-1 text-[9px] text-black/35">Illustrative only</div></div>
+              <div className="rounded-2xl bg-[#c6ff4d] p-4"><div className="text-[9px] uppercase tracking-widest text-black/50">AI meal insight</div><div className="mt-2 text-sm font-semibold">A balanced plate.</div><div className="mt-1 text-[10px] text-black/55">Protein · Fibre · Colour</div></div>
             </div>
-
-            <div className="mt-8 p-8 md:p-12 rounded-2xl bg-[#c6ff4d] text-black">
-
-              <Sparkles size={30} className="mx-auto" />
-
-              <h3 className="text-3xl md:text-5xl font-bold tracking-tight mt-5">
-                One VYTA.
-                <br />
-                One connected journey.
-              </h3>
-
-            </div>
-
           </Reveal>
-
         </div>
       </section>
 
+      {/* FITNESS — immersive photographic feature */}
+      <section id="fitness" className="relative overflow-hidden px-5 py-28 md:px-10 md:py-40">
+        <div className="absolute inset-0"><img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=2200&q=90" alt="" className="h-full w-full object-cover opacity-35"/><div className="absolute inset-0 bg-gradient-to-r from-[#070807] via-[#070807]/80 to-[#070807]/30"/><div className="absolute inset-0 bg-gradient-to-t from-[#070807] via-transparent to-[#070807]/40"/></div>
+        <div className="relative mx-auto grid max-w-[1280px] items-center gap-12 lg:grid-cols-[1fr_.8fr]">
+          <Reveal><Eyebrow>02 / Fitness intelligence</Eyebrow><h2 className="max-w-3xl text-5xl font-semibold leading-[.94] tracking-[-.07em] md:text-7xl">Make every<br/>move <span className="text-[#c6ff4d]">count.</span></h2><p className="mt-7 max-w-lg text-sm leading-7 text-white/55 md:text-base">From your first workout to your next personal best, VYTA is being shaped to make movement more intentional, measurable and sustainable.</p><div className="mt-9 flex flex-wrap gap-3">{["Goal-based plans","Activity tracking","Progress insights"].map(t=><span key={t} className="rounded-full border border-white/15 bg-white/[.06] px-4 py-2.5 text-xs text-white/70 backdrop-blur-xl">{t}</span>)}</div></Reveal>
+          <Reveal delay={.15}><GlassCard className="p-6 md:p-8"><div className="flex items-center justify-between"><span className="text-[9px] uppercase tracking-[.2em] text-white/40">Training snapshot</span><Dumbbell size={18} className="text-[#c6ff4d]"/></div><div className="mt-9 flex items-end justify-between"><div><div className="text-5xl font-semibold tracking-[-.06em]">04<span className="text-lg text-white/35">/05</span></div><p className="mt-2 text-xs text-white/45">Weekly sessions preview</p></div><div className="rounded-full bg-[#c6ff4d]/10 px-3 py-2 text-[10px] text-[#c6ff4d]">On your way</div></div><div className="mt-8 grid grid-cols-5 gap-2">{["M","T","W","T","F"].map((d,i)=><div key={d+i} className="text-center"><div className={`mx-auto flex aspect-square items-center justify-center rounded-xl ${i<4?"bg-[#c6ff4d] text-black":"bg-white/10 text-white/35"}`}>{i<4?<Check size={15}/>:<Plus size={15}/>}</div><div className="mt-2 text-[9px] text-white/35">{d}</div></div>)}</div><div className="mt-8 border-t border-white/10 pt-5"><div className="flex justify-between text-xs"><span className="text-white/45">Consistency</span><span>80%</span></div><div className="mt-3 h-1.5 rounded-full bg-white/10"><div className="h-full w-4/5 rounded-full bg-[#c6ff4d]"/></div></div><p className="mt-5 text-[9px] text-white/25">Illustrative dashboard concept.</p></GlassCard></Reveal>
+        </div>
+      </section>
 
-      {/* =====================================
-          10 — TRUST & FAQ
-      ===================================== */}
+      {/* HEALTH ECOSYSTEM — orbit / coin motif adapted to VYTA */}
+      <section id="ecosystem" className="overflow-hidden bg-[#0c0f0a] px-5 py-24 md:px-10 md:py-32">
+        <div className="mx-auto grid max-w-[1280px] items-center gap-10 lg:grid-cols-[.9fr_1.1fr]">
+          <Reveal><Eyebrow>03 / Connected health</Eyebrow><h2 className="text-5xl font-semibold leading-[.95] tracking-[-.07em] md:text-7xl">Everything<br/>works <span className="text-[#c6ff4d]">together.</span></h2><p className="mt-7 max-w-md text-sm leading-7 text-white/48 md:text-base">Nutrition affects energy. Movement shapes strength. Recovery supports consistency. VYTA brings these signals into one connected view.</p><div className="mt-9 space-y-4">{[[Apple,"Nutrition that adapts"],[Watch,"Wearable connections"],[Moon,"Sleep and recovery"],[Droplets,"Hydration and habits"]].map(([Icon,label]:any)=><div key={label} className="flex items-center gap-3 text-sm text-white/65"><span className="flex h-9 w-9 items-center justify-center rounded-full border border-[#c6ff4d]/20 bg-[#c6ff4d]/10 text-[#c6ff4d]"><Icon size={16}/></span>{label}</div>)}</div></Reveal>
+          <Reveal delay={.15}><OrbitVisual/></Reveal>
+        </div>
+      </section>
 
-      <section
-        id="faq"
-        className="bg-[#080a09] py-28 md:py-40 px-5 md:px-12"
-      >
-
-        <div className="max-w-[1100px] mx-auto">
-
-          <Reveal className="text-center mb-16">
-
-            <p className="text-[#c6ff4d] text-xs tracking-[4px] uppercase mb-8">
-              08 / Questions and clarity
-            </p>
-
-            <h2 className="text-5xl md:text-7xl font-semibold tracking-[-0.07em]">
-              Before we
-              <br />
-              <span className="text-[#c6ff4d]">get started.</span>
-            </h2>
-
-            <p className="text-white/40 mt-6">
-              Everything you should know about VYTA.
-            </p>
-
-          </Reveal>
-
-
-          <div className="space-y-3">
-
-            {faqs.map((faq, index) => {
-
-              const isOpen = faqOpen === index;
-
-              return (
-                <div
-                  key={faq.question}
-                  className="border border-white/10 rounded-2xl overflow-hidden bg-[#101410]"
-                >
-
-                  <button
-                    onClick={() => setFaqOpen(isOpen ? null : index)}
-                    className="w-full p-6 md:p-7 flex items-center justify-between text-left gap-5"
-                  >
-
-                    <span className="text-base md:text-lg font-semibold">
-                      {faq.question}
-                    </span>
-
-                    <motion.div
-                      animate={{ rotate: isOpen ? 45 : 0 }}
-                      className="text-[#c6ff4d] shrink-0"
-                    >
-                      <Plus size={23} />
-                    </motion.div>
-
-                  </button>
-
-                  <motion.div
-                    initial={false}
-                    animate={{
-                      height: isOpen ? "auto" : 0,
-                      opacity: isOpen ? 1 : 0,
-                    }}
-                    className="overflow-hidden"
-                  >
-                    <p className="px-6 md:px-7 pb-7 text-white/45 text-sm md:text-base leading-relaxed max-w-3xl">
-                      {faq.answer}
-                    </p>
-                  </motion.div>
-
-                </div>
-              );
-
-            })}
-
-          </div>
-
-
-          <Reveal className="mt-16 grid sm:grid-cols-3 gap-5">
-
+      {/* MARKETPLACE — editorial shop cards */}
+      <section id="store" className="bg-[#f2f2ef] px-5 py-24 text-[#080908] md:px-10 md:py-32">
+        <div className="mx-auto max-w-[1320px]">
+          <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end"><div><Eyebrow>04 / The VYTA store</Eyebrow><h2 className="text-5xl font-semibold leading-[.95] tracking-[-.07em] md:text-7xl">Good tools.<br/><span className="text-[#86b900]">Better habits.</span></h2></div><p className="max-w-md text-sm leading-7 text-black/50">A considered marketplace for the products that support your health journey, from training essentials to everyday wellness.</p></div>
+          <div className="mt-14 grid gap-4 md:grid-cols-3">
             {[
-              { icon: ShieldCheck, title: "Privacy matters", desc: "Responsible health data practices." },
-              { icon: Heart, title: "People first", desc: "Designed around real-life needs." },
-              { icon: Sparkles, title: "Intelligence", desc: "Insights that help you understand." },
-            ].map((item) => {
-              const Icon = item.icon;
-
-              return (
-                <div key={item.title} className="text-center p-6">
-                  <Icon className="text-[#c6ff4d] mx-auto" size={27} />
-                  <h3 className="font-semibold mt-4">{item.title}</h3>
-                  <p className="text-white/35 text-xs mt-2">{item.desc}</p>
-                </div>
-              );
-            })}
-
-          </Reveal>
-
+              ["Training essentials","Equipment for movement, strength and recovery.","https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?auto=format&fit=crop&w=1400&q=90","01"],
+              ["Nutrition & wellness","Everyday essentials to support balanced routines.","https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=1400&q=90","02"],
+              ["Wearables & tech","Tools that help you understand your daily signals.","https://images.unsplash.com/photo-1575311373937-040b8e1fd5b6?auto=format&fit=crop&w=1400&q=90","03"],
+            ].map(([title,desc,img,n],i)=><Reveal key={title} delay={i*.08} className="group overflow-hidden rounded-[26px] bg-white"><div className="relative h-[330px] overflow-hidden"><img src={img} alt={title} className="h-full w-full object-cover transition duration-700 group-hover:scale-105"/><span className="absolute left-5 top-5 rounded-full bg-black/60 px-3 py-2 text-[9px] tracking-widest text-white backdrop-blur-xl">{n} / VYTA SELECT</span></div><div className="p-6"><div className="flex items-center justify-between"><h3 className="text-2xl font-semibold tracking-[-.04em]">{title}</h3><ArrowUpRight size={19}/></div><p className="mt-3 text-sm leading-6 text-black/50">{desc}</p></div></Reveal>)}
+          </div>
+          <p className="mt-5 text-[10px] text-black/35">Marketplace categories are planned concepts. Product availability and partnerships will be announced separately.</p>
         </div>
       </section>
 
-
-      {/* =====================================
-          11 — EARLY ACCESS REGISTRATION
-      ===================================== */}
-
-      <section
-        id="register"
-        className="relative bg-[#c6ff4d] text-black py-28 md:py-40 px-5 md:px-12 overflow-hidden"
-      >
-
-        <div className="absolute top-[-150px] right-[-100px] w-[500px] h-[500px] rounded-full border border-black/10" />
-        <div className="absolute bottom-[-200px] left-[-100px] w-[500px] h-[500px] rounded-full border border-black/10" />
-
-        <div className="relative max-w-[1200px] mx-auto grid lg:grid-cols-2 gap-16 items-center">
-
-          {/* LEFT MESSAGE */}
-
-          <Reveal>
-
-            <p className="text-black/50 text-xs tracking-[4px] uppercase mb-8">
-              09 / Early access
-            </p>
-
-            <h2 className="text-6xl sm:text-7xl md:text-8xl font-bold tracking-[-0.09em] leading-[0.95]">
-              Your next
-              <br />
-              chapter
-              <br />
-              starts here.
-            </h2>
-
-            <p className="text-black/65 text-lg mt-8 max-w-md leading-relaxed">
-              Be among the first to experience a more connected
-              approach to personal health.
-            </p>
-
-            <div className="flex items-center gap-3 mt-10">
-              <div className="w-10 h-10 rounded-full border border-black/20 flex items-center justify-center">
-                <Check size={19} />
-              </div>
-              <p className="text-sm font-semibold">
-                Early access launch updates
-              </p>
-            </div>
-
-            <div className="flex items-center gap-3 mt-4">
-              <div className="w-10 h-10 rounded-full border border-black/20 flex items-center justify-center">
-                <Star size={19} />
-              </div>
-              <p className="text-sm font-semibold">
-                Be part of the founding community
-              </p>
-            </div>
-
-          </Reveal>
-
-
-          {/* REGISTRATION FORM */}
-
-          <Reveal delay={0.15}>
-
-            <div className="bg-[#080a09] text-white rounded-[28px] p-7 md:p-10 shadow-2xl">
-
-              {!submitted ? (
-                <>
-
-                  <p className="text-[#c6ff4d] text-xs uppercase tracking-[3px]">
-                    Join the waitlist
-                  </p>
-
-                  <h3 className="text-3xl font-semibold mt-4">
-                    Get early access.
-                  </h3>
-
-                  <p className="text-white/40 text-sm mt-3">
-                    Tell us a little about yourself.
-                  </p>
-
-
-                  <form
-                    className="mt-9 space-y-5"
-                    onSubmit={(e) => {
-                      e.preventDefault();
-                      setSubmitted(true);
-                    }}
-                  >
-
-                    <div>
-                      <label className="block text-xs text-white/50 mb-2">
-                        Your name
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        placeholder="Enter your name"
-                        className="w-full bg-white/[0.04] border border-white/10 rounded-xl px-4 py-4 text-sm outline-none focus:border-[#c6ff4d] transition"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-xs text-white/50 mb-2">
-                        Email address
-                      </label>
-                      <input
-                        type="email"
-                        required
-                        placeholder="you@example.com"
-                        className="w-full bg-white/[0.04] border border-white/10 rounded-xl px-4 py-4 text-sm outline-none focus:border-[#c6ff4d] transition"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-xs text-white/50 mb-2">
-                        Phone number (optional)
-                      </label>
-                      <input
-                        type="tel"
-                        placeholder="+91 98765 43210"
-                        className="w-full bg-white/[0.04] border border-white/10 rounded-xl px-4 py-4 text-sm outline-none focus:border-[#c6ff4d] transition"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-xs text-white/50 mb-2">
-                        Your primary goal
-                      </label>
-
-                      <select
-                        value={goal}
-                        onChange={(e) => setGoal(e.target.value)}
-                        className="w-full bg-[#151915] border border-white/10 rounded-xl px-4 py-4 text-sm outline-none focus:border-[#c6ff4d] transition"
-                      >
-                        <option>Weight management</option>
-                        <option>Build muscle</option>
-                        <option>Improve fitness</option>
-                        <option>Eat healthier</option>
-                        <option>Overall wellness</option>
-                      </select>
-                    </div>
-
-                    <div>
-                      <label className="block text-xs text-white/50 mb-2">
-                        Diet preference
-                      </label>
-
-                      <select
-                        value={dietPreference}
-                        onChange={(e) => setDietPreference(e.target.value)}
-                        className="w-full bg-[#151915] border border-white/10 rounded-xl px-4 py-4 text-sm outline-none focus:border-[#c6ff4d] transition"
-                      >
-                        <option>Vegetarian</option>
-                        <option>Vegan</option>
-                        <option>Non-Vegetarian</option>
-                      </select>
-                    </div>
-
-                    <button
-                      type="submit"
-                      className="w-full rounded-full bg-[#c6ff4d] text-black py-5 font-bold flex items-center justify-center gap-3 hover:bg-white transition"
-                    >
-                      Reserve my early access
-                      <ArrowRight size={18} />
-                    </button>
-
-                    <p className="text-center text-white/25 text-[10px] leading-relaxed">
-                      By registering, you agree to receive VYTA launch
-                      updates. You can opt out of communications.
-                    </p>
-
-                  </form>
-
-                </>
-              ) : (
-
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="py-12 text-center"
-                >
-
-                  <div className="w-20 h-20 rounded-full bg-[#c6ff4d] text-black flex items-center justify-center mx-auto">
-                    <Check size={38} />
-                  </div>
-
-                  <h3 className="text-3xl font-bold mt-8">
-                    You're on the list.
-                  </h3>
-
-                  <p className="text-white/45 mt-4 leading-relaxed">
-                    Thank you for your interest in VYTA.
-                    We're excited to share what's coming.
-                  </p>
-
-                  <button
-                    onClick={() => setSubmitted(false)}
-                    className="mt-8 text-[#c6ff4d] text-sm underline"
-                  >
-                    Back to registration
-                  </button>
-
-                </motion.div>
-
-              )}
-
-            </div>
-
-          </Reveal>
-
+      {/* SOCIAL PROOF / DEVICE ECOSYSTEM */}
+      <section className="px-5 py-24 md:px-10 md:py-32">
+        <div className="mx-auto max-w-[1100px] text-center"><Eyebrow>Built for your everyday</Eyebrow><h2 className="text-4xl font-semibold tracking-[-.06em] md:text-6xl">Your health. Your rhythm.</h2><p className="mx-auto mt-5 max-w-xl text-sm leading-7 text-white/45">A flexible experience designed to grow with your routines, your goals and the technology you already use.</p>
+          <div className="mt-14 grid grid-cols-2 gap-3 sm:grid-cols-4">{[[Watch,"Wearables"],[Activity,"Activity"],[Heart,"Wellness"],[ShieldCheck,"Privacy first"]].map(([Icon,label]:any)=><div key={label} className="rounded-2xl border border-white/10 bg-white/[.035] px-4 py-7"><Icon className="mx-auto text-[#c6ff4d]" size={22}/><p className="mt-4 text-xs text-white/60">{label}</p></div>)}</div>
         </div>
-
       </section>
 
+      {/* FAQ */}
+      <section id="faq" className="bg-[#10120f] px-5 py-24 md:px-10 md:py-32">
+        <div className="mx-auto grid max-w-[1200px] gap-12 lg:grid-cols-[.75fr_1.25fr]">
+          <div><Eyebrow>Questions, answered</Eyebrow><h2 className="text-5xl font-semibold leading-[.95] tracking-[-.07em] md:text-7xl">A little<br/>more <span className="text-[#c6ff4d]">clarity.</span></h2><p className="mt-6 max-w-sm text-sm leading-7 text-white/45">A few things you might want to know before joining the VYTA early-access list.</p></div>
+          <div className="border-t border-white/10">{faqs.map(([q,a],i)=><div key={q} className="border-b border-white/10"><button onClick={()=>setFaqOpen(faqOpen===i?null:i)} className="flex w-full items-center justify-between gap-5 py-6 text-left"><span className="text-base font-medium md:text-lg">{q}</span><span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-white/15 transition ${faqOpen===i?"rotate-45 bg-[#c6ff4d] text-black":"text-white/55"}`}><Plus size={16}/></span></button><AnimatePresence initial={false}>{faqOpen===i&&<motion.div initial={{height:0,opacity:0}} animate={{height:"auto",opacity:1}} exit={{height:0,opacity:0}} className="overflow-hidden"><p className="max-w-2xl pb-6 pr-12 text-sm leading-7 text-white/45">{a}</p></motion.div>}</AnimatePresence></div>)}</div>
+        </div>
+      </section>
 
-      {/* =====================================
-          FOOTER
-      ===================================== */}
-
-      <footer className="bg-[#080a09] border-t border-white/10 px-6 md:px-12 py-14">
-
-        <div className="max-w-[1400px] mx-auto">
-
-          <div className="flex flex-col md:flex-row justify-between gap-10">
-
+      {/* EARLY ACCESS */}
+      <section id="register" className="relative overflow-hidden px-5 py-24 md:px-10 md:py-36">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_100%,rgba(166,255,0,.17),transparent_55%)]"/>
+        <div className="relative mx-auto max-w-[1000px] rounded-[32px] border border-white/12 bg-white/[.045] p-6 shadow-[0_30px_100px_rgba(0,0,0,.3)] backdrop-blur-2xl md:p-14">
+          <div className="grid gap-10 md:grid-cols-[1fr_.9fr] md:items-center">
+            <div><Eyebrow>Your next chapter</Eyebrow><h2 className="text-5xl font-semibold leading-[.94] tracking-[-.07em] md:text-7xl">Make health<br/>feel <span className="text-[#c6ff4d]">personal.</span></h2><p className="mt-6 max-w-sm text-sm leading-7 text-white/45">Be among the first to experience VYTA. Join the early-access list for product updates and launch news.</p><div className="mt-8 flex items-center gap-3 text-[10px] uppercase tracking-[.18em] text-white/30"><ShieldCheck size={15} className="text-[#c6ff4d]"/> No spam. Just meaningful updates.</div></div>
             <div>
-              <a href="#" className="text-4xl font-black tracking-[-4px]">
-                VYTA<span className="text-[#c6ff4d]">.</span>
-              </a>
-
-              <p className="text-white/35 text-sm mt-5 max-w-sm leading-relaxed">
-                A new perspective on personal health.
-                Your body, your data, your journey.
-              </p>
+              {submitted?<div className="rounded-2xl border border-[#c6ff4d]/25 bg-[#c6ff4d]/10 p-7"><div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#c6ff4d] text-black"><Check size={22}/></div><h3 className="mt-5 text-2xl font-semibold">You&apos;re on the list.</h3><p className="mt-2 text-sm leading-6 text-white/55">Thanks for your interest in VYTA. This demo currently shows the confirmation locally; connect a backend to store registrations.</p></div>:<form onSubmit={(e)=>{e.preventDefault();setSubmitted(true)}} className="space-y-3">
+                <input required type="text" placeholder="Your name" className="w-full rounded-xl border border-white/12 bg-black/25 px-4 py-4 text-sm outline-none transition placeholder:text-white/30 focus:border-[#c6ff4d]/60"/>
+                <input required type="email" placeholder="Email address" className="w-full rounded-xl border border-white/12 bg-black/25 px-4 py-4 text-sm outline-none transition placeholder:text-white/30 focus:border-[#c6ff4d]/60"/>
+                <select value={goal} onChange={e=>setGoal(e.target.value)} className="w-full rounded-xl border border-white/12 bg-[#11130f] px-4 py-4 text-sm text-white/70 outline-none focus:border-[#c6ff4d]/60"><option>Build healthier habits</option><option>Weight management</option><option>Build strength</option><option>Improve fitness</option><option>Understand my nutrition</option></select>
+                <select value={diet} onChange={e=>setDiet(e.target.value)} className="w-full rounded-xl border border-white/12 bg-[#11130f] px-4 py-4 text-sm text-white/70 outline-none focus:border-[#c6ff4d]/60"><option>Vegetarian</option><option>Vegan</option><option>Non-vegetarian</option><option>No preference</option></select>
+                <button type="submit" className="group flex w-full items-center justify-between rounded-xl bg-[#c6ff4d] px-5 py-4 text-sm font-bold text-black transition hover:bg-white">Join the early-access list<span className="flex h-8 w-8 items-center justify-center rounded-full bg-black text-[#c6ff4d] transition group-hover:rotate-45"><ArrowUpRight size={16}/></span></button>
+                <p className="pt-1 text-[9px] leading-5 text-white/25">By joining, you agree to receive VYTA product updates. Form submissions are not stored until a backend is connected.</p>
+              </form>}
             </div>
-
-
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-10">
-
-              <div>
-                <p className="text-white/30 text-xs uppercase tracking-[2px] mb-5">
-                  Explore
-                </p>
-                <div className="flex flex-col gap-4 text-sm text-white/60">
-                  <a href="#intelligence" className="hover:text-[#c6ff4d]">Intelligence</a>
-                  <a href="#nutrition" className="hover:text-[#c6ff4d]">Nutrition</a>
-                  <a href="#fitness" className="hover:text-[#c6ff4d]">Fitness</a>
-                  <a href="#dashboard" className="hover:text-[#c6ff4d]">Dashboard</a>
-                </div>
-              </div>
-
-              <div>
-                <p className="text-white/30 text-xs uppercase tracking-[2px] mb-5">
-                  Discover
-                </p>
-                <div className="flex flex-col gap-4 text-sm text-white/60">
-                  <a href="#ai" className="hover:text-[#c6ff4d]">VYTA AI</a>
-                  <a href="#store" className="hover:text-[#c6ff4d]">Marketplace</a>
-                  <a href="#ecosystem" className="hover:text-[#c6ff4d]">Ecosystem</a>
-                  <a href="#faq" className="hover:text-[#c6ff4d]">FAQ</a>
-                </div>
-              </div>
-
-              <div>
-                <p className="text-white/30 text-xs uppercase tracking-[2px] mb-5">
-                  Get started
-                </p>
-                <div className="flex flex-col gap-4 text-sm text-white/60">
-                  <a href="#register" className="hover:text-[#c6ff4d]">Early access</a>
-                  <a href="#home" className="hover:text-[#c6ff4d]">Back to top</a>
-                </div>
-              </div>
-
-            </div>
-
           </div>
-
-          <div className="border-t border-white/10 mt-14 pt-8 flex flex-col md:flex-row justify-between gap-4 text-white/25 text-xs">
-
-            <p>© 2026 VYTA. All rights reserved.</p>
-
-            <p>
-              Designed for a more connected health journey.
-            </p>
-
-          </div>
-
         </div>
+      </section>
 
+      {/* FOOTER */}
+      <footer className="border-t border-white/10 px-5 py-10 md:px-10">
+        <div className="mx-auto max-w-[1320px]">
+          <div className="flex flex-col justify-between gap-8 md:flex-row md:items-center">
+            <div><a href="#home" className="text-3xl font-black tracking-[-.09em]">VYTA<span className="text-[#c6ff4d]">.</span></a><p className="mt-3 max-w-xs text-xs leading-6 text-white/35">A more connected way to understand and care for your health.</p></div>
+            <div className="flex flex-wrap gap-x-8 gap-y-3 text-xs text-white/50">{[["Product","#product"],["Nutrition","#nutrition"],["Fitness","#fitness"],["Store","#store"],["FAQ","#faq"],["Early access","#register"]].map(([l,h])=><a key={h} href={h} className="transition hover:text-[#c6ff4d]">{l}</a>)}</div>
+            <a href="#home" className="flex h-11 w-11 items-center justify-center rounded-full border border-white/15 transition hover:border-[#c6ff4d] hover:text-[#c6ff4d]"><ArrowUpRight size={18}/></a>
+          </div>
+          <div className="mt-10 flex flex-col justify-between gap-3 border-t border-white/10 pt-6 text-[9px] uppercase tracking-[.16em] text-white/25 sm:flex-row"><span>© 2026 VYTA. All rights reserved.</span><span>Designed for a more connected health journey.</span></div>
+        </div>
       </footer>
-
     </main>
   );
 }
