@@ -257,7 +257,7 @@ export default function Home() {
           </nav>
           <div className="hidden items-center gap-3 md:flex">
             <a href="#faq" className="rounded-full bg-white/[.08] px-5 py-3 text-xs font-medium text-white/80 transition hover:bg-white/15">Explore</a>
-            <a href="#register" whileHover={{ scale: 1.045, boxShadow: "0 0 35px rgba(198,255,77,.22)" }} whileTap={{ scale: .97 }} className="group flex items-center gap-3 rounded-full bg-[#c6ff4d] py-1.5 pl-5 pr-1.5 text-xs font-bold text-black transition hover:scale-[1.03]">Get early access<span className="flex h-9 w-9 items-center justify-center rounded-full bg-black text-[#c6ff4d] transition group-hover:rotate-45"><ArrowUpRight size={17}/></span></a>
+            <motion.a href="#register" whileHover={{ scale: 1.045, boxShadow: "0 0 35px rgba(198,255,77,.22)" }} whileTap={{ scale: .97 }} className="group flex items-center gap-3 rounded-full bg-[#c6ff4d] py-1.5 pl-5 pr-1.5 text-xs font-bold text-black transition hover:scale-[1.03]">Get early access<span className="flex h-9 w-9 items-center justify-center rounded-full bg-black text-[#c6ff4d] transition group-hover:rotate-45"><ArrowUpRight size={17}/></span></motion.a>
           </div>
           <button onClick={()=>setMenuOpen(!menuOpen)} aria-label="Toggle menu" className="rounded-full border border-white/15 p-2.5 md:hidden">{menuOpen?<X size={19}/>:<Menu size={19}/>}</button>
         </div>
@@ -278,7 +278,7 @@ export default function Home() {
           <h1 className="mx-auto max-w-5xl text-balance text-5xl font-semibold leading-[.94] tracking-[-.075em] sm:text-7xl md:text-[104px]">Your health,<br/><span className="text-[#c6ff4d]">in a new light.</span></h1>
           <p className="mx-auto mt-7 max-w-xl text-sm leading-7 text-white/45 md:text-base md:leading-8">Nutrition, movement, recovery and everyday habits. Connected by intelligence that helps you understand the whole picture.</p>
           <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <a href="#register" whileHover={{ scale: 1.045, boxShadow: "0 0 42px rgba(198,255,77,.24)" }} whileTap={{ scale: .97 }} className="group flex items-center gap-3 rounded-full bg-[#c6ff4d] py-1.5 pl-6 pr-1.5 text-sm font-bold text-black transition hover:scale-105">Get early access<span className="flex h-11 w-11 items-center justify-center rounded-full bg-black text-[#c6ff4d] transition group-hover:rotate-45"><ArrowUpRight size={19}/></span></a>
+            <motion.a href="#register" whileHover={{ scale: 1.045, boxShadow: "0 0 42px rgba(198,255,77,.24)" }} whileTap={{ scale: .97 }} className="group flex items-center gap-3 rounded-full bg-[#c6ff4d] py-1.5 pl-6 pr-1.5 text-sm font-bold text-black transition hover:scale-105">Get early access<span className="flex h-11 w-11 items-center justify-center rounded-full bg-black text-[#c6ff4d] transition group-hover:rotate-45"><ArrowUpRight size={19}/></span></motion.a>
             <a href="#product" className="flex items-center gap-2 rounded-full border border-white/15 px-6 py-4 text-sm text-white/75 transition hover:border-white/35 hover:bg-white/5">Explore VYTA <ArrowDownRight size={16}/></a>
           </div>
         </Reveal>
